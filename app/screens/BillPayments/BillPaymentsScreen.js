@@ -28,6 +28,14 @@ export default function BillPaymentsScreen({ navigation }) {
       iconColor: 'text-green-600'
     },
     {
+      id: 'rewards',
+      title: 'Rewards Points',
+      icon: '🏆',
+      description: 'View and redeem rewards',
+      color: 'bg-purple-100',
+      iconColor: 'text-purple-600'
+    },
+    {
       id: 'wallet',
       title: 'Add Money',
       icon: '💰',
@@ -109,11 +117,14 @@ export default function BillPaymentsScreen({ navigation }) {
 
         {/* Row 3 */}
         <View className="flex-row gap-4 mb-8">
-          <TouchableOpacity className="flex-1 bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-            <View className="bg-pink-100 w-12 h-12 rounded-full items-center justify-center mb-3">
-              <Text className="text-pink-600">🎁</Text>
+          <TouchableOpacity 
+            className="flex-1 bg-white rounded-xl p-4 shadow-sm border border-gray-100"
+            onPress={() => navigation.navigate('RewardsPoints')}
+          >
+            <View className="bg-purple-100 w-12 h-12 rounded-full items-center justify-center mb-3">
+              <Text className="text-purple-600">�</Text>
             </View>
-            <Text className="text-gray-900 font-semibold text-sm mb-1">Rewards</Text>
+            <Text className="text-gray-900 font-semibold text-sm mb-1">Rewards Points</Text>
             <Text className="text-gray-500 text-xs">Redeem points</Text>
           </TouchableOpacity>
           

@@ -1,58 +1,57 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import { useSelector } from 'react-redux';
+import { PaymentHandler } from '../business/handlers';
+import { CardValidator } from '../utils';
 
 export default function CreditCardPaymentScreen({ route, navigation }) {
   const { plan } = route.params;
+  const user = useSelector((state) => state.auth.user);
   const [cardNumber, setCardNumber] = useState('');
   const [cardHolder, setCardHolder] = useState('');
   const [expiryDate, setExpiryDate] = useState('');
   const [cvv, setCvv] = useState('');
 
-  const handlePayment = () => {
-    if (!cardNumber || !cardHolder || !expiryDate || !cvv) {
-      Alert.alert('Error', 'Please fill all card details');
-      return;
-    }
-    
-    // Remove spaces from card number for validation
-    const cleanedCardNumber = cardNumber.replace(/\s/g, '');
-    if (cleanedCardNumber.length !== 16) {
-      Alert.alert('Error', 'Please enter a valid 16-digit card number');
-      return;
-    }
-    
-    if (cvv.length !== 3) {
-      Alert.alert('Error', 'Please enter a valid 3-digit CVV');
-      return;
-    }
+  const paymentHandler = new PaymentHandler(navigation, user);
 
-    // Store transaction data
-    const transaction = {
-      id: Date.now() + '_' + Math.random().toString(36).substr(2, 9),
-      type: 'Mobile Recharge',
-      amount: plan.price,
-      data: plan.data,
-      source: 'Credit Card',
-      cardNumber: cleanedCardNumber.slice(-4), // Store last 4 digits
-      date: new Date().toLocaleDateString(),
-      status: 'Success'
+  const handlePayment = async () => {
+    console.log('CreditCardPaymentScreen: handlePayment called');
+    console.log('CreditCardPaymentScreen: Plan:', JSON.stringify(plan, null, 2));
+    
+    const cardDetails = {
+      cardNumber,
+      cardHolder,
+      expiryDate,
+      cvv
     };
 
-    navigation.navigate('PaymentSuccess', { transaction });
+    console.log('CreditCardPaymentScreen: Calling paymentHandler.processCreditCardPayment');
+    const result = await paymentHandler.processCreditCardPayment(plan, cardDetails);
+    console.log('CreditCardPaymentScreen: Payment result:', JSON.stringify(result, null, 2));
+    
+    if (result.success) {
+      console.log('CreditCardPaymentScreen: Payment successful, checking reward data');
+      console.log('CreditCardPaymentScreen: Reward data:', result.reward);
+      
+      // Add reward data to transaction if available
+      const transactionWithReward = {
+        ...result.transaction,
+        reward: result.reward
+      };
+      console.log('CreditCardPaymentScreen: Transaction with reward:', JSON.stringify(transactionWithReward, null, 2));
+      paymentHandler.navigateToPaymentSuccess(transactionWithReward);
+    } else {
+      console.log('CreditCardPaymentScreen: Payment failed:', result.error);
+      Alert.alert('Error', result.error);
+    }
   };
 
   const formatCardNumber = (text) => {
-    const cleaned = text.replace(/\s/g, '');
-    const chunks = cleaned.match(/.{1,4}/g);
-    return chunks ? chunks.join(' ') : cleaned;
+    return CardValidator.formatCardNumber(text);
   };
 
   const formatExpiryDate = (text) => {
-    const cleaned = text.replace(/\D/g, '');
-    if (cleaned.length >= 2) {
-      return cleaned.slice(0, 2) + '/' + cleaned.slice(2, 4);
-    }
-    return cleaned;
+    return CardValidator.formatExpiryDate(text);
   };
 
   return (

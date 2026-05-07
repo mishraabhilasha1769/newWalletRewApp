@@ -1,28 +1,37 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import RewardPopup from '../components/RewardPopup';
+import { RewardHandler } from '../business/handlers';
 
 export default function PaymentSuccessScreen({ route, navigation }) {
   const { transaction } = route.params;
+  const [showRewardPopup, setShowRewardPopup] = useState(false);
+  const [rewardData, setRewardData] = useState(null);
 
   useEffect(() => {
-    // Add transaction to history when screen loads
-    console.log('PaymentSuccess: Adding transaction to history:', transaction);
+    // Transaction is already saved to database in CreditCardPaymentScreen
+    console.log('PaymentSuccess: Transaction data:', JSON.stringify(transaction, null, 2));
+    console.log('PaymentSuccess: Transaction amount:', transaction.amount);
+    console.log('PaymentSuccess: Transaction reward:', transaction.reward);
     
-    // Initialize global storage if it doesn't exist
-    if (!global.transactionStorage) {
-      global.transactionStorage = [];
-    }
-    
-    // Add transaction directly to global storage
-    global.transactionStorage.unshift(transaction);
-    
-    // Also try to use the addTransaction function if available
-    if (global.addTransaction) {
-      global.addTransaction(transaction);
+    // Check if transaction has rewards and show popup
+    if (transaction.reward) {
+      console.log('PaymentSuccess: Showing reward popup');
+      const rewardHandler = new RewardHandler({ uid: transaction.userId });
+      const rewardMessage = rewardHandler.getRewardMessage(transaction.reward);
+      setRewardData(rewardMessage);
       
+      // Show reward popup after a short delay
+      setTimeout(() => {
+        setShowRewardPopup(true);
+      }, 1000);
+    } else {
+      console.log('PaymentSuccess: No reward found in transaction');
+      // Let's check if this transaction should have rewards
+      const rewardHandler = new RewardHandler({ uid: transaction.userId });
+      const shouldHaveReward = rewardHandler.isEligibleForReward(transaction.amount);
+      console.log('PaymentSuccess: Should have reward:', shouldHaveReward);
     }
-    
-    console.log('PaymentSuccess: Transaction added. Total transactions:', global.transactionStorage.length);
   }, [transaction]);
 
   const handleViewTransactions = () => {
@@ -31,6 +40,10 @@ export default function PaymentSuccessScreen({ route, navigation }) {
 
   const handleBackToHome = () => {
     navigation.navigate('Home');
+  };
+
+  const handleCloseRewardPopup = () => {
+    setShowRewardPopup(false);
   };
 
   return (
@@ -116,6 +129,13 @@ export default function PaymentSuccessScreen({ route, navigation }) {
           </TouchableOpacity>
         </View>
       </ScrollView>
+      
+      {/* Reward Popup */}
+      <RewardPopup
+        visible={showRewardPopup}
+        rewardData={rewardData}
+        onClose={handleCloseRewardPopup}
+      />
     </View>
   );
 }

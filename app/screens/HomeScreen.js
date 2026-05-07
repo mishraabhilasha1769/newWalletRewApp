@@ -1,12 +1,33 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
-import { useSelector } from 'react-redux';
+import { View, Text, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import { useSelector, useDispatch } from 'react-redux';
+import { logout } from '../store/authSlice';
+import { UserHandler } from '../business/handlers';
 
 const HomeScreen = ({ navigation }) => {
   const user = useSelector((state) => state.auth.user);
+  const dispatch = useDispatch();
 
-  const wallet = user?.userData?.wallet?.balance || 0;
-  const points = user?.userData?.rewards?.points || 0;
+  const userHandler = new UserHandler(user);
+  const wallet = userHandler.getWalletBalance();
+  const points = userHandler.getRewardsPoints();
+
+  const handleLogout = () => {
+    Alert.alert(
+      'Logout',
+      'Are you sure you want to logout?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { 
+          text: 'Logout', 
+          onPress: () => {
+            dispatch(logout());
+            navigation.navigate('Login');
+          }
+        }
+      ]
+    );
+  };
 
   return (
     <View className="flex-1 bg-gray-50">
@@ -18,9 +39,12 @@ const HomeScreen = ({ navigation }) => {
               <Text className="text-gray-900 text-2xl font-bold">Welcome back,</Text>
               <Text className="text-blue-600 text-xl font-semibold">{user?.username}</Text>
             </View>
-            <View className="w-12 h-12 bg-blue-100 rounded-full items-center justify-center">
-              <Text className="text-blue-600 text-lg font-bold">WR</Text>
-            </View>
+            <TouchableOpacity 
+                onPress={handleLogout}
+                className="bg-red-100 rounded-lg px-3 py-1 items-center justify-center"
+              >
+                <Text className="text-red-600 text-sm font-medium">logout</Text>
+              </TouchableOpacity>
           </View>
         </View>
 
@@ -40,7 +64,10 @@ const HomeScreen = ({ navigation }) => {
             </View>
 
             {/* Rewards Points Card */}
-            <View className="flex-1 bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+            <TouchableOpacity 
+              className="flex-1 bg-white rounded-xl p-5 shadow-sm border border-gray-100"
+              onPress={() => navigation.navigate('RewardsPoints')}
+            >
               <View className="flex-row items-center mb-3">
                 <View className="w-10 h-10 bg-purple-100 rounded-full items-center justify-center mr-3">
                   <Text className="text-purple-600 text-lg">⭐</Text>
@@ -49,7 +76,15 @@ const HomeScreen = ({ navigation }) => {
               </View>
               <Text className="text-gray-900 text-2xl font-bold">{points}</Text>
               <Text className="text-purple-600 text-xs mt-1">Points earned</Text>
-            </View>
+              
+              {/* Redeem Button */}
+              <TouchableOpacity 
+                className="bg-purple-600 rounded-lg py-2 px-3 items-center mt-3"
+                onPress={() => navigation.navigate('RewardsPoints')}
+              >
+                <Text className="text-white text-xs font-semibold">Redeem</Text>
+              </TouchableOpacity>
+            </TouchableOpacity>
           </View>
         </View>
 

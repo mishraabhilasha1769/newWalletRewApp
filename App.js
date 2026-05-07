@@ -12,6 +12,7 @@ import MobileRechargeScreen from './app/screens/MobileRechargeScreen';
 import CreditCardPaymentScreen from './app/screens/CreditCardPaymentScreen';
 import PaymentSuccessScreen from './app/screens/PaymentSuccessScreen';
 import TransactionHistoryScreen from './app/screens/TransactionHistoryScreen';
+import RewardsPointsScreen from './app/screens/RewardsPointsScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -59,6 +60,11 @@ const App = () => {
             name="TransactionHistory" 
             component={TransactionHistoryScreen}
             options={{ title: 'Transaction History', headerShown: false }}
+          />
+          <Stack.Screen 
+            name="RewardsPoints" 
+            component={RewardsPointsScreen}
+            options={{ title: 'Rewards Points', headerShown: false }}
           />
         </Stack.Navigator>
       </NavigationContainer>
