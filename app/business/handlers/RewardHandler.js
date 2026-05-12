@@ -1,10 +1,11 @@
-import { userService } from '../../services/userService';
 import { REWARDS_CONFIG, SUCCESS_MESSAGES } from '../../constants';
+import { userService } from '../../services/userService';
 import { CurrencyFormatter } from '../../utils';
 
 export class RewardHandler {
-  constructor(user) {
+  constructor(user, dispatch = null) {
     this.user = user;
+    this.dispatch = dispatch;
   }
 
   calculateRewardPoints(transactionAmount) {
@@ -38,6 +39,22 @@ export class RewardHandler {
 
       if (!updateResult.success) {
         throw new Error('Failed to update rewards');
+      }
+
+      // Update Redux state if dispatch is available
+      if (this.dispatch) {
+        this.dispatch({
+          type: 'auth/updateUser',
+          payload: {
+            userData: {
+              ...this.user.userData,
+              rewards: {
+                ...this.user.userData.rewards,
+                points: newTotalPoints
+              }
+            }
+          }
+        });
       }
 
       return {

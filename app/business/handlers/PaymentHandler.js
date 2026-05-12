@@ -1,12 +1,13 @@
+import { ERROR_MESSAGES, PAYMENT_METHODS } from '../../constants';
 import { transactionService } from '../../services/transactionService';
-import { CardValidator, AuthValidator, TransactionValidator } from '../../utils/validators';
-import { PAYMENT_METHODS, ERROR_MESSAGES } from '../../constants';
+import { AuthValidator, CardValidator } from '../../utils/validators';
 import { RewardHandler } from './RewardHandler';
 
 export class PaymentHandler {
-  constructor(navigation, user) {
+  constructor(navigation, user, dispatch = null) {
     this.navigation = navigation;
     this.user = user;
+    this.dispatch = dispatch;
   }
 
   async processCreditCardPayment(plan, cardDetails) {
@@ -61,7 +62,7 @@ export class PaymentHandler {
       console.log('PaymentHandler: Processing rewards for transaction:', result.transaction.id);
       console.log('PaymentHandler: Transaction amount:', result.transaction.amount);
       
-      const rewardHandler = new RewardHandler(this.user);
+      const rewardHandler = new RewardHandler(this.user, this.dispatch);
       const rewardResult = await rewardHandler.processTransactionReward(result.transaction);
 
       console.log('PaymentHandler: Reward result:', JSON.stringify(rewardResult, null, 2));

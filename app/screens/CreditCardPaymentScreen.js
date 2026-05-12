@@ -1,18 +1,19 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert } from 'react-native';
-import { useSelector } from 'react-redux';
+import { useState } from 'react';
+import { Alert, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
 import { PaymentHandler } from '../business/handlers';
 import { CardValidator } from '../utils';
 
 export default function CreditCardPaymentScreen({ route, navigation }) {
   const { plan } = route.params;
   const user = useSelector((state) => state.auth.user);
+  const dispatch = useDispatch();
   const [cardNumber, setCardNumber] = useState('');
   const [cardHolder, setCardHolder] = useState('');
   const [expiryDate, setExpiryDate] = useState('');
   const [cvv, setCvv] = useState('');
 
-  const paymentHandler = new PaymentHandler(navigation, user);
+  const paymentHandler = new PaymentHandler(navigation, user, dispatch);
 
   const handlePayment = async () => {
     console.log('CreditCardPaymentScreen: handlePayment called');

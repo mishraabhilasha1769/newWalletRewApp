@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { authService } from '../services/authService';
 import { signupService } from '../services/signupService';
 
@@ -37,6 +37,9 @@ const authSlice = createSlice({
     logout: (state) => {
       state.user = null;
     },
+    updateUser: (state, action) => {
+      state.user = { ...state.user, ...action.payload };
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -65,5 +68,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout } = authSlice.actions;
+export const { logout, updateUser } = authSlice.actions;
 export default authSlice.reducer;

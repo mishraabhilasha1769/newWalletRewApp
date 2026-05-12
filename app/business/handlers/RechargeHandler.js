@@ -1,12 +1,12 @@
-import { RECHARGE_PLANS, TRANSACTION_TYPES, ERROR_MESSAGES } from '../../constants';
+import { RECHARGE_PLANS } from '../../constants';
 import { TransactionValidator } from '../../utils/validators';
 import { PaymentHandler } from './PaymentHandler';
 
 export class RechargeHandler {
-  constructor(navigation, user) {
+  constructor(navigation, user, dispatch = null) {
     this.navigation = navigation;
     this.user = user;
-    this.paymentHandler = new PaymentHandler(navigation, user);
+    this.paymentHandler = new PaymentHandler(navigation, user, dispatch);
   }
 
   getAvailablePlans() {
