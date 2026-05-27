@@ -175,7 +175,8 @@ export default function BillPaymentsScreen({ navigation }) {
 
           
 
-          <TouchableOpacity className="flex-1 bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+          <TouchableOpacity className="flex-1 bg-white rounded-xl p-4 shadow-sm border border-gray-100"
+          onPress={() => navigation.navigate('Electricity')}>
 
             <View className="bg-yellow-100 w-12 h-12 rounded-full items-center justify-center mb-3">
 
@@ -213,7 +214,8 @@ export default function BillPaymentsScreen({ navigation }) {
 
           
 
-          <TouchableOpacity className="flex-1 bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+          <TouchableOpacity className="flex-1 bg-white rounded-xl p-4 shadow-sm border border-gray-100"
+          onPress={() => navigation.navigate('WalletRecharge')}>
 
             <View className="bg-purple-100 w-12 h-12 rounded-full items-center justify-center mb-3">
 
@@ -239,11 +241,12 @@ export default function BillPaymentsScreen({ navigation }) {
 
             className="flex-1 bg-white rounded-xl p-4 shadow-sm border border-gray-100"
 
-            onPress={() => navigation.navigate('RewardsPoints')}
+            onPress={() => navigation.navigate('RedeemRewards')}
 
           >
 
-            <View className="bg-purple-100 w-12 h-12 rounded-full items-center justify-center mb-3">
+            <View className="bg-purple-100 w-12 h-12 rounded-full items-center justify-center mb-3"
+           >
 
               <Text className="text-purple-600">�</Text>
 

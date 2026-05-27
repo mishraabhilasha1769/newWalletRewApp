@@ -9,11 +9,11 @@ export class RewardHandler {
   }
 
   calculateRewardPoints(transactionAmount) {
-    if (transactionAmount < REWARDS_CONFIG.MIN_TRANSACTION_AMOUNT) {
+    if (Math.abs(transactionAmount) < REWARDS_CONFIG.MIN_TRANSACTION_AMOUNT) {
       return { eligible: false, points: 0 };
     }
 
-    const rewardPoints = Math.floor((transactionAmount * REWARDS_CONFIG.REWARD_PERCENTAGE) / 100);
+    const rewardPoints = Math.floor((Math.abs(transactionAmount) * REWARDS_CONFIG.REWARD_PERCENTAGE) / 100);
     return { eligible: true, points: rewardPoints };
   }
 

@@ -21,6 +21,8 @@ export const ROUTES = {
 
 export const TRANSACTION_TYPES = {
   MOBILE_RECHARGE: 'Mobile Recharge',
+  ELECTRICITY_BILL: 'Electricity Bill',
+  WALLET_RECHARGE: 'Wallet Recharge',
   PAYMENT_SUCCESS: 'Success',
   PAYMENT_FAILED: 'Failed',
 };
@@ -59,6 +61,6 @@ export const SUCCESS_MESSAGES = {
 
 export const REWARDS_CONFIG = {
   MIN_TRANSACTION_AMOUNT: 100,
-  REWARD_PERCENTAGE: 10,
+  REWARD_PERCENTAGE: 5,
   REWARD_TYPE: 'POINTS',
 };

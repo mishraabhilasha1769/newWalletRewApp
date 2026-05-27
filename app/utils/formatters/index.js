@@ -1,19 +1,27 @@
 import { TRANSACTION_TYPES } from '../../constants';
 
 export class TransactionFormatter {
-  static formatAmount(amount, type) {
-    if (type === TRANSACTION_TYPES.MOBILE_RECHARGE) {
-      return `-₹${amount}`;
-    }
-    return `+₹${amount}`;
+static formatAmount(amount, type) {
+  if (
+    type === TRANSACTION_TYPES.MOBILE_RECHARGE ||
+    type === TRANSACTION_TYPES.ELECTRICITY_BILL || type === TRANSACTION_TYPES.WALLET_RECHARGE
+  ) {
+    return `-₹${Math.abs(amount)}`;
   }
 
-  static getAmountColor(type) {
-    if (type === TRANSACTION_TYPES.MOBILE_RECHARGE) {
-      return 'text-red-600';
-    }
-    return 'text-green-600';
+  return `+₹${amount}`;
+}
+
+static getAmountColor(type) {
+  if (
+    type === TRANSACTION_TYPES.MOBILE_RECHARGE ||
+    type === TRANSACTION_TYPES.ELECTRICITY_BILL
+  ) {
+    return 'text-red-600';
   }
+
+  return 'text-green-600';
+}
 
   static formatDate(date) {
     return new Date(date).toLocaleDateString('en-IN', {

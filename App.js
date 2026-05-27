@@ -25,9 +25,12 @@ import PaymentSuccessScreen from './app/screens/PaymentSuccessScreen';
 
 import TransactionHistoryScreen from './app/screens/TransactionHistoryScreen';
 
-import RewardsPointsScreen from './app/screens/RewardsPointsScreen';
+import RedeemRewards from './app/screens/BillPayments/tabs/RedeemRewards';
 
-
+import Electricity from './app/screens/BillPayments/tabs/Electricity';
+import ElectricityBillDetails from './app/screens/BillPayments/tabs/ElectricityBillDetails';
+import WalletRecharge from './app/screens/BillPayments/tabs/WalletRecharge';
+import GamificationScreen from './app/screens/GamificationScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -70,6 +73,16 @@ const App = () => {
             component={HomeScreen}
 
             options={{ title: 'Wallet Rewards', headerShown: true }}
+
+          />
+
+          <Stack.Screen 
+
+            name="GamificationScreen" 
+
+            component={GamificationScreen}
+
+            options={{ title: 'Gamification', headerShown: true }}
 
           />
 
@@ -125,14 +138,39 @@ const App = () => {
 
           <Stack.Screen 
 
-            name="RewardsPoints" 
+            name="RedeemRewards" 
 
-            component={RewardsPointsScreen}
+            component={RedeemRewards}
 
             options={{ title: 'Rewards Points', headerShown: false }}
 
           />
 
+          <Stack.Screen
+  name="Electricity"
+  component={Electricity}
+  options={{
+    title: 'Electricity',
+    headerShown: true,
+  }}
+/>
+<Stack.Screen
+name ="ElectricityBillDetails"
+component={ElectricityBillDetails}
+options={{
+  title: 'Electricity Bill Details',
+  headerShown: true,
+}}
+/>
+
+<Stack.Screen
+  name="WalletRecharge"
+  component={WalletRecharge}
+  options={{
+    title: 'Wallet Recharge',
+    headerShown: true,
+  }}
+/>
         </Stack.Navigator>
 
       </NavigationContainer>

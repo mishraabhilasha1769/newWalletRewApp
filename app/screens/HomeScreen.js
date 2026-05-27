@@ -1,8 +1,7 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Alert } from 'react-native';
-import { useSelector, useDispatch } from 'react-redux';
-import { logout } from '../store/authSlice';
+import { Alert, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
 import { UserHandler } from '../business/handlers';
+import { logout } from '../store/authSlice';
 
 const HomeScreen = ({ navigation }) => {
   const user = useSelector((state) => state.auth.user);
@@ -65,9 +64,8 @@ const HomeScreen = ({ navigation }) => {
 
             {/* Rewards Points Card */}
             <TouchableOpacity 
-              className="flex-1 bg-white rounded-xl p-5 shadow-sm border border-gray-100"
-              onPress={() => navigation.navigate('RewardsPoints')}
-            >
+              className="flex-1 bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+
               <View className="flex-row items-center mb-3">
                 <View className="w-10 h-10 bg-purple-100 rounded-full items-center justify-center mr-3">
                   <Text className="text-purple-600 text-lg">⭐</Text>
@@ -80,8 +78,8 @@ const HomeScreen = ({ navigation }) => {
               {/* Redeem Button */}
               <TouchableOpacity 
                 className="bg-purple-600 rounded-lg py-2 px-3 items-center mt-3"
-                onPress={() => navigation.navigate('RewardsPoints')}
-              >
+                 onPress={() => navigation.navigate('RedeemRewards')}>
+               
                 <Text className="text-white text-xs font-semibold">Redeem</Text>
               </TouchableOpacity>
             </TouchableOpacity>
@@ -106,7 +104,8 @@ const HomeScreen = ({ navigation }) => {
             <Text className="text-gray-400 text-lg">›</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 mb-3 flex-row items-center">
+          <TouchableOpacity className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 mb-3 flex-row items-center" 
+          onPress={() => navigation.navigate('GamificationScreen')}>
             <View className="w-12 h-12 bg-green-100 rounded-full items-center justify-center mr-4">
               <Text className="text-green-600 text-xl">🎮</Text>
             </View>
