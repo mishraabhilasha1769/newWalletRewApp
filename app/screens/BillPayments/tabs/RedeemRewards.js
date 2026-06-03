@@ -75,9 +75,9 @@ export default function RedeemRewards({
 await updateDoc(
   doc(db, 'users', user.uid),
   {
-    'userData.rewards.points': 0,
+    'rewards.points': 0,
 
-    'userData.wallet.balance':
+    'wallet.balance':
       (user.userData?.wallet?.balance || 0) +
       redeemAmount,
   }

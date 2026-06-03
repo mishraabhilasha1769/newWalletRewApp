@@ -11,7 +11,9 @@ const HomeScreen = ({ navigation }) => {
   const wallet = userHandler.getWalletBalance();
   const points = userHandler.getRewardsPoints();
   const rewardPoints =
-  user?.rewards?.points || 0;
+    user?.userData?.rewards?.points ??
+    user?.rewards?.points ??
+    0;
 
 const isGamificationUnlocked =
   rewardPoints >= 600;

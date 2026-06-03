@@ -29,12 +29,12 @@ export class RewardHandler {
         throw new Error('Failed to fetch user profile');
       }
 
-      const currentPoints = profileResult.data.userData?.rewards?.points || 0;
+      const currentPoints = profileResult.data?.rewards?.points || 0;
       const newTotalPoints = currentPoints + additionalPoints;
 
       // Update user rewards in database
       const updateResult = await userService.updateUserProfile(this.user.uid, {
-        'userData.rewards.points': newTotalPoints
+        'rewards.points': newTotalPoints
       });
 
       if (!updateResult.success) {

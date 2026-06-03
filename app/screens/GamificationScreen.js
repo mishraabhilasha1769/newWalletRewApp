@@ -103,7 +103,7 @@ export default function GamificationScreen({navigation}) {
         user.uid
       ),
       {
-        'userData.rewards.points':
+        'rewards.points':
           updatedPoints,
       }
     );

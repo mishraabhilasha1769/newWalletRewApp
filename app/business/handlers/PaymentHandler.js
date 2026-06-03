@@ -121,7 +121,7 @@ async processWalletPayment(plan) {
     await updateDoc(
       doc(db, 'users', this.user.uid),
       {
-        'userData.wallet.balance': updatedBalance,
+        'wallet.balance': updatedBalance,
       }
     );
 
