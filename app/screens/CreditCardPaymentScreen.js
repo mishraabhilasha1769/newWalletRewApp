@@ -1,5 +1,15 @@
 import { useState } from 'react';
-import { Alert, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import {
+  Alert,
+  Keyboard,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native';
+
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useDispatch, useSelector } from 'react-redux';
 import { PaymentHandler } from '../business/handlers';
 import { CardValidator } from '../utils';
@@ -55,86 +65,181 @@ export default function CreditCardPaymentScreen({ route, navigation }) {
     return CardValidator.formatExpiryDate(text);
   };
 
-  return (
-    <View className="flex-1 bg-gray-50">
-      {/* Header */}
-      <View className="bg-white px-5 pt-12 pb-6 shadow-sm">
-        <View className="flex-row items-center">
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Text className="text-blue-600 text-lg mr-4">‹</Text>
-          </TouchableOpacity>
-          <Text className="text-gray-900 text-xl font-bold">Credit Card Payment</Text>
-        </View>
-      </View>
+ return (
+  <View className="flex-1 bg-slate-100">
 
-      <ScrollView className="flex-1 px-5" showsVerticalScrollIndicator={false}>
+    <TouchableWithoutFeedback
+      onPress={Keyboard.dismiss}
+    >
+
+      <KeyboardAwareScrollView
+        className="flex-1"
+        enableOnAndroid
+        extraScrollHeight={50}
+        keyboardShouldPersistTaps="handled"
+        contentContainerStyle={{
+          paddingBottom: 20,
+        }}
+        showsVerticalScrollIndicator={false}
+      >
+
+        {/* Header */}
+        <View className="bg-blue-600 px-5 pt-10 pb-5 rounded-b-[24px]">
+
+          <View className="flex-row items-center">
+
+            <TouchableOpacity
+              onPress={() =>
+                navigation.goBack()
+              }
+            >
+              <Text className="text-white text-2xl mr-4">
+                ‹
+              </Text>
+            </TouchableOpacity>
+
+            <View>
+
+              <Text className="text-white text-2xl font-bold">
+                Card Payment 💳
+              </Text>
+
+              <Text className="text-blue-100 mt-1">
+                Secure checkout
+              </Text>
+
+            </View>
+
+          </View>
+
+        </View>
+
         {/* Order Summary */}
-        <View className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 mt-6">
-          <Text className="text-gray-900 text-lg font-semibold mb-3">Order Summary</Text>
-          <View className="flex-row justify-between items-center mb-2">
-            <Text className="text-gray-600">Mobile Recharge</Text>
-            <Text className="text-gray-900 font-semibold">₹{plan.price}</Text>
+        <View className="mx-4 mt-4 bg-white rounded-3xl p-4 shadow">
+
+          <Text className="text-gray-900 text-lg font-bold mb-3">
+            Order Summary
+          </Text>
+
+          <View className="flex-row justify-between py-1">
+
+            <Text className="text-gray-500">
+              Service
+            </Text>
+
+            <Text className="font-semibold text-gray-900">
+              {plan.type || 'Recharge'}
+            </Text>
+
           </View>
-          <View className="flex-row justify-between items-center">
-            <Text className="text-gray-600">Data</Text>
-            <Text className="text-gray-900">{plan.data}</Text>
+
+          <View className="flex-row justify-between py-1">
+
+            <Text className="text-gray-500">
+              Data
+            </Text>
+
+            <Text className="font-semibold text-gray-900">
+              {plan.data}
+            </Text>
+
           </View>
-          <View className="flex-row justify-between items-center mt-3 pt-3 border-t border-gray-200">
-            <Text className="text-gray-900 font-semibold">Total Amount</Text>
-            <Text className="text-blue-600 font-bold text-lg">₹{plan.price}</Text>
+
+          <View className="border-t border-gray-200 mt-3 pt-3 flex-row justify-between">
+
+            <Text className="text-lg font-bold text-gray-900">
+              Total
+            </Text>
+
+            <Text className="text-xl font-bold text-blue-600">
+              ₹{plan.price}
+            </Text>
+
           </View>
+
         </View>
 
         {/* Card Details */}
-        <View className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 mt-6">
-          <Text className="text-gray-900 text-lg font-semibold mb-4">Card Details</Text>
-          
+        <View className="mx-4 mt-4 bg-white rounded-3xl p-4 shadow">
+
+          <Text className="text-gray-900 text-lg font-bold mb-4">
+            Card Details
+          </Text>
+
           {/* Card Number */}
-          <View className="mb-4">
-            <Text className="text-gray-700 text-sm font-medium mb-2">Card Number</Text>
+          <View className="mb-3">
+
+            <Text className="text-gray-700 font-medium mb-2">
+              Card Number
+            </Text>
+
             <TextInput
-              className="bg-gray-50 border border-gray-300 rounded-lg px-4 py-3 text-gray-900"
+              className="bg-gray-100 rounded-2xl px-4 py-3 text-gray-900"
               placeholder="1234 5678 9012 3456"
               placeholderTextColor="#9CA3AF"
               value={cardNumber}
-              onChangeText={(text) => setCardNumber(formatCardNumber(text))}
+              onChangeText={(text) =>
+                setCardNumber(
+                  formatCardNumber(text)
+                )
+              }
               keyboardType="numeric"
               maxLength={19}
             />
+
           </View>
 
-          {/* Card Holder Name */}
-          <View className="mb-4">
-            <Text className="text-gray-700 text-sm font-medium mb-2">Card Holder Name</Text>
+          {/* Card Holder */}
+          <View className="mb-3">
+
+            <Text className="text-gray-700 font-medium mb-2">
+              Card Holder Name
+            </Text>
+
             <TextInput
-              className="bg-gray-50 border border-gray-300 rounded-lg px-4 py-3 text-gray-900"
+              className="bg-gray-100 rounded-2xl px-4 py-3 text-gray-900"
               placeholder="John Doe"
               placeholderTextColor="#9CA3AF"
               value={cardHolder}
               onChangeText={setCardHolder}
               autoCapitalize="words"
             />
+
           </View>
 
-          {/* Expiry Date and CVV */}
-          <View className="flex-row gap-4">
-            <View className="flex-1 mb-4">
-              <Text className="text-gray-700 text-sm font-medium mb-2">Expiry Date</Text>
+          {/* Expiry + CVV */}
+          <View className="flex-row gap-3">
+
+            <View className="flex-1">
+
+              <Text className="text-gray-700 font-medium mb-2">
+                Expiry
+              </Text>
+
               <TextInput
-                className="bg-gray-50 border border-gray-300 rounded-lg px-4 py-3 text-gray-900"
+                className="bg-gray-100 rounded-2xl px-4 py-3 text-gray-900"
                 placeholder="MM/YY"
                 placeholderTextColor="#9CA3AF"
                 value={expiryDate}
-                onChangeText={(text) => setExpiryDate(formatExpiryDate(text))}
+                onChangeText={(text) =>
+                  setExpiryDate(
+                    formatExpiryDate(text)
+                  )
+                }
                 keyboardType="numeric"
                 maxLength={5}
               />
+
             </View>
-            
-            <View className="flex-1 mb-4">
-              <Text className="text-gray-700 text-sm font-medium mb-2">CVV</Text>
+
+            <View className="flex-1">
+
+              <Text className="text-gray-700 font-medium mb-2">
+                CVV
+              </Text>
+
               <TextInput
-                className="bg-gray-50 border border-gray-300 rounded-lg px-4 py-3 text-gray-900"
+                className="bg-gray-100 rounded-2xl px-4 py-3 text-gray-900"
                 placeholder="123"
                 placeholderTextColor="#9CA3AF"
                 value={cvv}
@@ -143,20 +248,33 @@ export default function CreditCardPaymentScreen({ route, navigation }) {
                 maxLength={3}
                 secureTextEntry
               />
+
             </View>
+
           </View>
+
         </View>
 
         {/* Pay Button */}
-        <View className="mt-6 mb-8">
-          <TouchableOpacity 
-            className="bg-blue-600 rounded-lg py-4 items-center"
+        <View className="mx-4 mt-5">
+
+          <TouchableOpacity
+            className="bg-blue-600 rounded-2xl py-4 items-center"
             onPress={handlePayment}
           >
-            <Text className="text-white font-semibold text-base">Pay ₹{plan.price}</Text>
+
+            <Text className="text-white text-base font-bold">
+              Pay ₹{plan.price}
+            </Text>
+
           </TouchableOpacity>
+
         </View>
-      </ScrollView>
-    </View>
-  );
+
+      </KeyboardAwareScrollView>
+
+    </TouchableWithoutFeedback>
+
+  </View>
+);
 }

@@ -1,276 +1,202 @@
-
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
-
-
-
-export default function BillPaymentsScreen({ navigation }) {
-
-  const services = [
-
-    {
-
-      id: 'mobile',
-
-      title: 'Mobile Recharge',
-
-      icon: '📱',
-
-      description: 'Recharge prepaid mobile',
-
-      color: 'bg-blue-100',
-
-      iconColor: 'text-blue-600'
-
-    },
-
-    {
-
-      id: 'electricity',
-
-      title: 'Electricity Bill',
-
-      icon: '⚡',
-
-      description: 'Pay electricity bills',
-
-      color: 'bg-yellow-100',
-
-      iconColor: 'text-yellow-600'
-
-    },
-
-    {
-
-      id: 'pay',
-
-      title: 'Send Money',
-
-      icon: '💸',
-
-      description: 'Transfer to anyone',
-
-      color: 'bg-green-100',
-
-      iconColor: 'text-green-600'
-
-    },
-
-    {
-
-      id: 'rewards',
-
-      title: 'Rewards Points',
-
-      icon: '🏆',
-
-      description: 'View and redeem rewards',
-
-      color: 'bg-purple-100',
-
-      iconColor: 'text-purple-600'
-
-    },
-
-    {
-
-      id: 'wallet',
-
-      title: 'Add Money',
-
-      icon: '💰',
-
-      description: 'Load wallet balance',
-
-      color: 'bg-purple-100',
-
-      iconColor: 'text-purple-600'
-
-    },
-
-    {
-
-      id: 'rewards',
-
-      title: 'Rewards',
-
-      icon: '🎁',
-
-      description: 'Redeem points',
-
-      color: 'bg-pink-100',
-
-      iconColor: 'text-pink-600'
-
-    },
-
-    {
-
-      id: 'dth',
-
-      title: 'DTH Recharge',
-
-      icon: '📺',
-
-      description: 'TV recharge',
-
-      color: 'bg-orange-100',
-
-      iconColor: 'text-orange-600'
-
-    }
-
-  ];
-
-
+import {
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+
+export default function BillPaymentsScreen({
+  navigation,
+}) {
 
   return (
-
-    <View className="flex-1 bg-gray-50">
+    <View className="flex-1 bg-slate-100">
 
       {/* Header */}
+      <View className="bg-indigo-600 px-5 pt-14 pb-10 rounded-b-[32px]">
 
-      <View className="bg-white px-5 pt-12 pb-6 shadow-sm">
+        <Text className="text-white text-3xl font-bold">
+          Bill Payments
+        </Text>
 
-        <Text className="text-gray-900 text-2xl font-bold">Bill Payments</Text>
-
-        <Text className="text-gray-600 text-sm mt-1">Pay bills and manage your finances</Text>
+        <Text className="text-indigo-100 text-base mt-2">
+          Pay bills and manage your finances
+        </Text>
 
       </View>
 
+      {/* Banner */}
+      <View className="mx-5 -mt-5 bg-amber-100 rounded-3xl p-5 shadow">
 
+        <Text className="text-amber-900 text-lg font-bold">
+          ⚡ Pay Bills & Earn Rewards
+        </Text>
 
-      
+        <Text className="text-amber-700 mt-2">
+          Complete transactions and collect reward points.
+        </Text>
 
-      {/* Services Grid */}
+      </View>
 
-      <ScrollView className="flex-1 px-5" showsVerticalScrollIndicator={false}>
+      <ScrollView
+        className="flex-1 px-5 mt-6"
+        showsVerticalScrollIndicator={false}
+      >
 
-        <Text className="text-gray-900 text-lg font-semibold mb-4">All Services</Text>
-
-        
+        <Text className="text-gray-900 text-xl font-bold mb-5">
+          All Services
+        </Text>
 
         {/* Row 1 */}
-
         <View className="flex-row gap-4 mb-4">
 
-          <TouchableOpacity 
-
-            className="flex-1 bg-white rounded-xl p-4 shadow-sm border border-gray-100"
-
-            onPress={() => navigation.navigate('MobileRecharge')}
-
+          <TouchableOpacity
+            className="flex-1 bg-blue-50 rounded-3xl p-5 shadow-md"
+            onPress={() =>
+              navigation.navigate(
+                'MobileRecharge'
+              )
+            }
           >
 
-            <View className="bg-blue-100 w-12 h-12 rounded-full items-center justify-center mb-3">
-
-              <Text className="text-blue-600">📱</Text>
-
+            <View className="bg-blue-500 w-14 h-14 rounded-full items-center justify-center mb-4">
+              <Text className="text-2xl">
+                📱
+              </Text>
             </View>
 
-            <Text className="text-gray-900 font-semibold text-sm mb-1">Mobile Recharge</Text>
+            <Text className="text-gray-900 font-bold">
+              Mobile Recharge
+            </Text>
 
-            <Text className="text-gray-500 text-xs">Recharge prepaid mobile</Text>
+            <Text className="text-gray-500 mt-1">
+              Recharge prepaid mobile
+            </Text>
 
           </TouchableOpacity>
 
-          
+          <TouchableOpacity
+            className="flex-1 bg-yellow-50 rounded-3xl p-5 shadow-md"
+            onPress={() =>
+              navigation.navigate(
+                'Electricity'
+              )
+            }
+          >
 
-          <TouchableOpacity className="flex-1 bg-white rounded-xl p-4 shadow-sm border border-gray-100"
-          onPress={() => navigation.navigate('Electricity')}>
-
-            <View className="bg-yellow-100 w-12 h-12 rounded-full items-center justify-center mb-3">
-
-              <Text className="text-yellow-600">⚡</Text>
-
+            <View className="bg-yellow-400 w-14 h-14 rounded-full items-center justify-center mb-4">
+              <Text className="text-2xl">
+                ⚡
+              </Text>
             </View>
 
-            <Text className="text-gray-900 font-semibold text-sm mb-1">Electricity Bill</Text>
+            <Text className="text-gray-900 font-bold">
+              Electricity Bill
+            </Text>
 
-            <Text className="text-gray-500 text-xs">Pay electricity bills</Text>
+            <Text className="text-gray-500 mt-1">
+              Pay electricity bills
+            </Text>
 
           </TouchableOpacity>
 
         </View>
-
-
 
         {/* Row 2 */}
-
         <View className="flex-row gap-4 mb-4">
 
-          <TouchableOpacity className="flex-1 bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+          <TouchableOpacity
+            className="flex-1 bg-green-50 rounded-3xl p-5 shadow-md"
+          >
 
-            <View className="bg-green-100 w-12 h-12 rounded-full items-center justify-center mb-3">
-
-              <Text className="text-green-600">💸</Text>
-
+            <View className="bg-green-500 w-14 h-14 rounded-full items-center justify-center mb-4">
+              <Text className="text-2xl">
+                💸
+              </Text>
             </View>
 
-            <Text className="text-gray-900 font-semibold text-sm mb-1">Send Money</Text>
+            <Text className="text-gray-900 font-bold">
+              Send Money
+            </Text>
 
-            <Text className="text-gray-500 text-xs">Transfer to anyone</Text>
+            <Text className="text-gray-500 mt-1">
+              Transfer to anyone
+            </Text>
 
           </TouchableOpacity>
 
-          
+          <TouchableOpacity
+            className="flex-1 bg-violet-50 rounded-3xl p-5 shadow-md"
+            onPress={() =>
+              navigation.navigate(
+                'WalletRecharge'
+              )
+            }
+          >
 
-          <TouchableOpacity className="flex-1 bg-white rounded-xl p-4 shadow-sm border border-gray-100"
-          onPress={() => navigation.navigate('WalletRecharge')}>
-
-            <View className="bg-purple-100 w-12 h-12 rounded-full items-center justify-center mb-3">
-
-              <Text className="text-purple-600">💰</Text>
-
+            <View className="bg-violet-500 w-14 h-14 rounded-full items-center justify-center mb-4">
+              <Text className="text-2xl">
+                💰
+              </Text>
             </View>
 
-            <Text className="text-gray-900 font-semibold text-sm mb-1">Add Money</Text>
+            <Text className="text-gray-900 font-bold">
+              Add Money
+            </Text>
 
-            <Text className="text-gray-500 text-xs">Load wallet balance</Text>
+            <Text className="text-gray-500 mt-1">
+              Load wallet balance
+            </Text>
 
           </TouchableOpacity>
 
         </View>
 
-
-
         {/* Row 3 */}
-
         <View className="flex-row gap-4 mb-8">
 
-          <TouchableOpacity 
-
-            className="flex-1 bg-white rounded-xl p-4 shadow-sm border border-gray-100"
-
-            onPress={() => navigation.navigate('RedeemRewards')}
-
+          <TouchableOpacity
+            className="flex-1 bg-pink-50 rounded-3xl p-5 shadow-md"
+            onPress={() =>
+              navigation.navigate(
+                'RedeemRewards'
+              )
+            }
           >
 
-            <View className="bg-purple-100 w-12 h-12 rounded-full items-center justify-center mb-3"
-           >
-
-              <Text className="text-purple-600">�</Text>
-
+            <View className="bg-pink-500 w-14 h-14 rounded-full items-center justify-center mb-4">
+              <Text className="text-2xl">
+                🎁
+              </Text>
             </View>
 
-            <Text className="text-gray-900 font-semibold text-sm mb-1">Rewards Points</Text>
+            <Text className="text-gray-900 font-bold">
+              Rewards Points
+            </Text>
 
-            <Text className="text-gray-500 text-xs">Redeem points</Text>
+            <Text className="text-gray-500 mt-1">
+              Redeem rewards
+            </Text>
 
           </TouchableOpacity>
 
-          
+          <TouchableOpacity
+            className="flex-1 bg-orange-50 rounded-3xl p-5 shadow-md"
+          >
 
-          <TouchableOpacity className="flex-1 bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-
-            <View className="bg-orange-100 w-12 h-12 rounded-full items-center justify-center mb-3">
-
-              <Text className="text-orange-600">📺</Text>
-
+            <View className="bg-orange-500 w-14 h-14 rounded-full items-center justify-center mb-4">
+              <Text className="text-2xl">
+                📺
+              </Text>
             </View>
 
-            <Text className="text-gray-900 font-semibold text-sm mb-1">DTH Recharge</Text>
+            <Text className="text-gray-900 font-bold">
+              DTH Recharge
+            </Text>
 
-            <Text className="text-gray-500 text-xs">TV recharge</Text>
+            <Text className="text-gray-500 mt-1">
+              TV recharge
+            </Text>
 
           </TouchableOpacity>
 
@@ -279,8 +205,5 @@ export default function BillPaymentsScreen({ navigation }) {
       </ScrollView>
 
     </View>
-
   );
-
 }
-

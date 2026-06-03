@@ -7,10 +7,7 @@ import {
   View,
 } from 'react-native';
 
-export default function Electricity({ navigation }) {
-  const [searchQuery, setSearchQuery] = useState('');
-
-  const electricityBills = [
+const electricityBills = [
     {
       id: 1,
       title: 'Divyashree Electricity Bill',
@@ -34,6 +31,9 @@ export default function Electricity({ navigation }) {
       iconColor: 'text-blue-600',
     },
   ];
+
+export default function Electricity({ navigation }) {
+  const [searchQuery, setSearchQuery] = useState('');
 
   const filteredBills = useMemo(() => {
     return electricityBills.filter((bill) =>

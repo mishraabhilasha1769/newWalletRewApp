@@ -47,95 +47,203 @@ export default function PaymentSuccessScreen({ route, navigation }) {
   };
 
   return (
-    <View className="flex-1 bg-gray-50">
-      {/* Header */}
-      <View className="bg-white px-5 pt-12 pb-6 shadow-sm">
-        <Text className="text-gray-900 text-xl font-bold text-center">Payment Success</Text>
+  <View className="flex-1 bg-slate-100">
+
+    {/* Header */}
+    <View className="bg-emerald-600 px-5 pt-10 pb-5 rounded-b-[24px]">
+
+      <Text className="text-white text-2xl font-bold text-center">
+        Payment Successful 🎉
+      </Text>
+
+      <Text className="text-emerald-100 text-center mt-1">
+        Transaction completed successfully
+      </Text>
+
+    </View>
+
+    <ScrollView
+      className="flex-1 px-4"
+      contentContainerStyle={{
+        paddingBottom: 20,
+      }}
+      showsVerticalScrollIndicator={false}
+    >
+
+      {/* Success Summary */}
+      <View className="bg-white rounded-3xl p-5 shadow -mt-3">
+
+        <View className="items-center">
+
+          <View className="w-16 h-16 bg-green-100 rounded-full items-center justify-center">
+
+            <Text className="text-3xl">
+              ✅
+            </Text>
+
+          </View>
+
+          <Text className="text-xl font-bold text-gray-900 mt-3">
+            Payment Successful
+          </Text>
+
+          <Text className="text-gray-500 text-center mt-1">
+            Your payment has been processed.
+          </Text>
+
+          <Text className="text-3xl font-bold text-emerald-600 mt-4">
+            ₹{Math.abs(transaction.amount)}
+          </Text>
+
+        </View>
+
       </View>
 
-      <ScrollView className="flex-1 px-5" showsVerticalScrollIndicator={false}>
-        {/* Success Icon */}
-        <View className="items-center mt-8 mb-6">
-          <View className="w-20 h-20 bg-green-100 rounded-full items-center justify-center">
-            <Text className="text-green-600 text-3xl">✓</Text>
-          </View>
-          <Text className="text-gray-900 text-2xl font-bold mt-4">Payment Successful!</Text>
-          <Text className="text-gray-600 text-sm mt-2">Your recharge has been completed</Text>
+      {/* Transaction Details */}
+      <View className="bg-white rounded-3xl p-4 mt-4 shadow">
+
+        <Text className="text-lg font-bold text-gray-900 mb-3">
+          Transaction Details
+        </Text>
+
+        <View className="flex-row justify-between py-2">
+
+          <Text className="text-gray-500">
+            Transaction ID
+          </Text>
+
+          <Text
+            className="font-semibold text-gray-900"
+            numberOfLines={1}
+          >
+            {transaction.id}
+          </Text>
+
         </View>
 
-        {/* Transaction Details */}
-        <View className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-          <Text className="text-gray-900 text-lg font-semibold mb-4">Transaction Details</Text>
-          
-          <View className="flex-row justify-between items-center mb-3">
-            <Text className="text-gray-600">Transaction ID</Text>
-            <Text className="text-gray-900 font-medium">#{transaction.id}</Text>
-          </View>
-          
-          <View className="flex-row justify-between items-center mb-3">
-            <Text className="text-gray-600">Type</Text>
-            <Text className="text-gray-900 font-medium">{transaction.type}</Text>
-          </View>
-          
-          <View className="flex-row justify-between items-center mb-3">
-            <Text className="text-gray-600">Amount</Text>
-            <Text className="text-gray-900 font-semibold">₹{transaction.amount}</Text>
-          </View>
-          
-          <View className="flex-row justify-between items-center mb-3">
-            <Text className="text-gray-600">Data</Text>
-            <Text className="text-gray-900 font-medium">{transaction.data}</Text>
-          </View>
-          
-          <View className="flex-row justify-between items-center mb-3">
-            <Text className="text-gray-600">Payment Source</Text>
-            <Text className="text-gray-900 font-medium">{transaction.source}</Text>
-          </View>
-          
-          {transaction.cardNumber && (
-            <View className="flex-row justify-between items-center mb-3">
-              <Text className="text-gray-600">Card Ending</Text>
-              <Text className="text-gray-900 font-medium">**** **** **** {transaction.cardNumber}</Text>
-            </View>
-          )}
-          
-          <View className="flex-row justify-between items-center mb-3">
-            <Text className="text-gray-600">Date</Text>
-            <Text className="text-gray-900 font-medium">{transaction.date}</Text>
-          </View>
-          
-          <View className="flex-row justify-between items-center">
-            <Text className="text-gray-600">Status</Text>
-            <View className="bg-green-100 px-3 py-1 rounded-full">
-              <Text className="text-green-700 text-sm font-medium">{transaction.status}</Text>
-            </View>
-          </View>
+        <View className="flex-row justify-between py-2">
+
+          <Text className="text-gray-500">
+            Type
+          </Text>
+
+          <Text className="font-semibold text-gray-900">
+            {transaction.type}
+          </Text>
+
         </View>
 
-        {/* Action Buttons */}
-        <View className="mt-6 mb-8 space-y-3">
-          <TouchableOpacity 
-            className="bg-blue-600 rounded-lg py-4 items-center"
-            onPress={handleViewTransactions}
-          >
-            <Text className="text-white font-semibold text-base">View Transaction History</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity 
-            className="bg-white border border-gray-300 rounded-lg py-4 items-center"
-            onPress={handleBackToHome}
-          >
-            <Text className="text-gray-700 font-semibold text-base">Back to Home</Text>
-          </TouchableOpacity>
+        <View className="flex-row justify-between py-2">
+
+          <Text className="text-gray-500">
+            Source
+          </Text>
+
+          <Text className="font-semibold text-gray-900">
+            {transaction.source}
+          </Text>
+
         </View>
-      </ScrollView>
-      
-      {/* Reward Popup */}
-      <RewardPopup
-        visible={showRewardPopup}
-        rewardData={rewardData}
-        onClose={handleCloseRewardPopup}
-      />
-    </View>
-  );
+
+        {transaction.cardNumber && (
+
+          <View className="flex-row justify-between py-2">
+
+            <Text className="text-gray-500">
+              Card
+            </Text>
+
+            <Text className="font-semibold text-gray-900">
+              **** {transaction.cardNumber}
+            </Text>
+
+          </View>
+
+        )}
+
+        <View className="flex-row justify-between py-2">
+
+          <Text className="text-gray-500">
+            Date
+          </Text>
+
+          <Text className="font-semibold text-gray-900">
+            {transaction.date}
+          </Text>
+
+        </View>
+
+        <View className="flex-row justify-between py-2 items-center">
+
+          <Text className="text-gray-500">
+            Status
+          </Text>
+
+          <View className="bg-green-100 px-3 py-1 rounded-full">
+
+            <Text className="text-green-700 text-xs font-bold">
+              SUCCESS
+            </Text>
+
+          </View>
+
+        </View>
+
+      </View>
+
+      {/* Reward Card */}
+      {transaction.reward && (
+
+        <View className="bg-amber-100 rounded-3xl p-4 mt-4">
+
+          <Text className="text-amber-900 font-bold text-lg">
+            🎁 Reward Earned
+          </Text>
+
+          <Text className="text-amber-700 mt-1">
+            +{transaction.reward.pointsEarned} reward points added.
+          </Text>
+
+        </View>
+
+      )}
+
+      {/* Buttons */}
+      <View className="mt-5 mb-6">
+
+        <TouchableOpacity
+          className="bg-indigo-600 rounded-2xl py-4 items-center"
+          onPress={handleViewTransactions}
+        >
+
+          <Text className="text-white font-bold">
+            View Transactions
+          </Text>
+
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          className="bg-white border border-gray-200 rounded-2xl py-4 items-center mt-3"
+          onPress={handleBackToHome}
+        >
+
+          <Text className="text-gray-700 font-bold">
+            Back To Home
+          </Text>
+
+        </TouchableOpacity>
+
+      </View>
+
+    </ScrollView>
+
+    <RewardPopup
+      visible={showRewardPopup}
+      rewardData={rewardData}
+      onClose={handleCloseRewardPopup}
+    />
+
+  </View>
+);
+  
 }

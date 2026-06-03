@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    width: 100%; height: 100%;
+    overflow: hidden;
+    background: #FFF5FB;
+    font-family: 'Nunito', Arial, sans-serif;
+    -webkit-text-size-adjust: 100%;
+  }
+  #ww {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    height: 100vh;
+    padding: 12px 16px 16px;
+    gap: 10px;
+  }
+  #title {
+    font-size: 22px;
+    font-weight: 900;
+    color: #d4608f;
+    letter-spacing: 0.02em;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  #canvasWrap {
+    position: relative;
+    flex-shrink: 0;
+  }
+  #wc { display: block; }
+  #spinBtn {
+    flex-shrink: 0;
+    padding: 12px 0;
+    font-size: 17px;
+    font-weight: 900;
+    border-radius: 50px;
+    border: none;
+    cursor: pointer;
+    background: #f9a8c9;
+    color: #7c2d6b;
+    box-shadow: 0 5px 0 #d4608f;
+    letter-spacing: 0.03em;
+    font-family: 'Nunito', Arial, sans-serif;
+    width: 180px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  #spinBtn:active { transform: translateY(3px); box-shadow: 0 2px 0 #d4608f; }
+  #spinBtn:disabled { opacity: 0.55; }
+  #popWrap {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    inset: 0;
+    background: rgba(253,220,235,0.75);
+    border-radius: 16px;
+  }
+  #popCard {
+    background: #fff5fb;
+    border-radius: 20px;
+    border: 3px solid #f9a8c9;
+    padding: 20px 20px 18px;
+    width: 85%;
+    text-align: center;
+  }
+  #popIcon { font-size: 42px; margin-bottom: 6px; }
+  #popTitle { font-size: 18px; font-weight: 900; color: #7c2d6b; margin: 0 0 6px; }
+  #popMsg { font-size: 13px; font-weight: 700; color: #b05080; margin: 0 0 14px; line-height: 1.4; }
+  #closeBtn {
+    padding: 10px 28px;
+    font-size: 14px;
+    font-weight: 900;
+    border-radius: 50px;
+    border: none;
+    cursor: pointer;
+    background: #c084fc;
+    color: #fff;
+    box-shadow: 0 4px 0 #7c3aed;
+    font-family: 'Nunito', Arial, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+  }
+  #closeBtn:active { transform: translateY(2px); box-shadow: 0 2px 0 #7c3aed; }
+</style>
+</head>
+<body>
+<div id="ww">
+  <p id="title">Spin &amp; Win! 🎉</p>
+  <div id="canvasWrap">
+    <canvas id="wc"></canvas>
+    <div id="popWrap">
+      <div id="popCard">
+        <div id="popIcon"></div>
+        <p id="popTitle"></p>
+        <p id="popMsg"></p>
+        <button id="closeBtn" onclick="closePop()">Spin Again!</button>
+      </div>
+    </div>
+  </div>
+  <button id="spinBtn" onclick="doSpin()">SPIN!</button>
+ 
+
+<button
+  id="backBtn"
+  onclick="goHome()"
+  style="
+    display:none;
+    padding:12px 32px;
+    font-size:16px;
+    font-weight:900;
+    border:none;
+    border-radius:50px;
+    background:#60A5FA;
+    color:white;
+    width:180px;
+    margin-top:10px;
+  "
+>
+  Back To Home
+</button>
+</div>
+
+<script>
+const SEG=[
+  {label:"5 pts",  base:"#FF9AA2",light:"#ffd6da",text:"#7a1a28"},
+  {label:"Spin Again",base:"#FFB347",light:"#ffe4b8",text:"#6b3600"},
+  {label:"10 pts", base:"#FDFD96",light:"#fefed4",text:"#555200"},
+  {label:"Better Luck",base:"#B5EAD7",light:"#daf5ed",text:"#1a5940"},
+  {label:"15 pts", base:"#C7CEEA",light:"#e8ebf8",text:"#252a6b"},
+  {label:"Spin Again",base:"#FF9AA2",light:"#ffd6da",text:"#7a1a28"},
+  {label:"20 pts", base:"#FFDAC1",light:"#fff0e6",text:"#6b2e00"},
+  {label:"Better Luck",base:"#B5D5EA",light:"#daeef8",text:"#0d3352"},
+];
+const N=SEG.length, ARC=(2*Math.PI)/N;
+let ang=0, spinning=false;
+
+function sizeWheel() {
+  const ww = document.getElementById("ww");
+  const title = document.getElementById("title");
+  const btn = document.getElementById("spinBtn");
+  const wrap = document.getElementById("canvasWrap");
+  const cv = document.getElementById("wc");
+
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+
+  // Reserve space for title (~34px) + button (~46px) + gaps (~32px) + padding (~28px)
+  const reserved = 140;
+  const available = Math.min(vw - 32, vh - reserved);
+  const S = Math.max(180, Math.floor(available));
+
+  wrap.style.width  = S + "px";
+  wrap.style.height = S + "px";
+  cv.width  = S;
+  cv.height = S;
+
+  return S;
+}
+
+function drawWheel(a) {
+  const cv = document.getElementById("wc");
+  const S = cv.width || 260;
+  const ctx = cv.getContext("2d");
+  const cx=S/2, cy=S/2, R=S/2-4, rimW=S*0.065, innerR=R-rimW;
+
+  ctx.clearRect(0,0,S,S);
+
+  ctx.beginPath(); ctx.arc(cx,cy,R+3,0,2*Math.PI);
+  ctx.fillStyle="#f9c8dd"; ctx.fill();
+
+  ctx.beginPath(); ctx.arc(cx,cy,R,0,2*Math.PI);
+  ctx.fillStyle="#f48fb8"; ctx.fill();
+
+  for(let i=0;i<16;i++){
+    const bA=(i/16)*2*Math.PI;
+    const bx=cx+(R-rimW*0.45)*Math.cos(bA);
+    const by=cy+(R-rimW*0.45)*Math.sin(bA);
+    const br=rimW*0.22;
+    ctx.beginPath(); ctx.arc(bx,by,br,0,2*Math.PI);
+    ctx.fillStyle="#f9d0e4"; ctx.fill();
+    ctx.beginPath(); ctx.arc(bx-br*0.25,by-br*0.3,br*0.35,0,2*Math.PI);
+    ctx.fillStyle="rgba(255,255,255,0.55)"; ctx.fill();
+  }
+
+  ctx.beginPath(); ctx.arc(cx,cy,innerR+2,0,2*Math.PI);
+  ctx.fillStyle="#e0557a"; ctx.fill();
+
+  for(let i=0;i<N;i++){
+    const s=a+i*ARC, e=s+ARC, seg=SEG[i];
+    ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,innerR,s,e);
+    ctx.closePath(); ctx.fillStyle=seg.base; ctx.fill();
+    ctx.save(); ctx.beginPath(); ctx.moveTo(cx,cy);
+    ctx.arc(cx,cy,innerR,s,s+ARC*0.15); ctx.closePath();
+    ctx.fillStyle=seg.light; ctx.globalAlpha=0.55; ctx.fill(); ctx.restore();
+    ctx.beginPath(); ctx.moveTo(cx,cy); ctx.arc(cx,cy,innerR,s,e);
+    ctx.closePath(); ctx.strokeStyle="rgba(255,255,255,0.6)"; ctx.lineWidth=2; ctx.stroke();
+    ctx.save(); ctx.translate(cx,cy); ctx.rotate(s+ARC/2); ctx.textAlign="right";
+    const fs=Math.max(9, Math.round(S*0.042));
+    ctx.font=`900 ${fs}px 'Nunito',Arial,sans-serif`;
+    ctx.fillStyle=seg.text; ctx.shadowColor="rgba(255,255,255,0.6)"; ctx.shadowBlur=2;
+    ctx.fillText(seg.label, innerR-8, fs*0.36); ctx.restore();
+  }
+
+  const kb=S*0.082;
+  ctx.beginPath(); ctx.arc(cx,cy,kb,0,2*Math.PI); ctx.fillStyle="#f48fb8"; ctx.fill();
+  const kg=ctx.createRadialGradient(cx-kb*0.3,cy-kb*0.3,kb*0.05,cx,cy,kb);
+  kg.addColorStop(0,"rgba(255,255,255,0.9)");
+  kg.addColorStop(0.4,"rgba(249,168,201,0.7)");
+  kg.addColorStop(1,"rgba(180,60,100,0.3)");
+  ctx.beginPath(); ctx.arc(cx,cy,kb,0,2*Math.PI); ctx.fillStyle=kg; ctx.fill();
+  ctx.beginPath(); ctx.arc(cx-kb*0.28,cy-kb*0.3,kb*0.28,0,2*Math.PI);
+  ctx.fillStyle="rgba(255,255,255,0.7)"; ctx.fill();
+
+  const pw=S*0.036, ph=S*0.095, py=3;
+  ctx.save();
+  ctx.beginPath(); ctx.moveTo(cx,py+2); ctx.lineTo(cx-pw,py+ph*0.55);
+  ctx.lineTo(cx-pw*0.55,py+ph); ctx.lineTo(cx+pw*0.55,py+ph);
+  ctx.lineTo(cx+pw,py+ph*0.55); ctx.closePath();
+  ctx.fillStyle="#e8446e"; ctx.shadowColor="rgba(220,60,90,0.35)"; ctx.shadowBlur=4;
+  ctx.fill(); ctx.strokeStyle="rgba(255,255,255,0.5)"; ctx.lineWidth=1.5; ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx,py+4); ctx.lineTo(cx-pw*0.5,py+ph*0.45);
+  ctx.lineTo(cx,py+ph*0.6); ctx.closePath();
+  ctx.fillStyle="rgba(255,255,255,0.35)"; ctx.fill(); ctx.restore();
+}
+
+function doSpin(){
+  if(spinning) return;
+  spinning=true;
+  const btn=document.getElementById("spinBtn"); btn.disabled=true;
+  const extra=(5+Math.floor(Math.random()*5))*2*Math.PI;
+  const tSeg=Math.floor(Math.random()*N);
+  const mid=-Math.PI/2-(tSeg*ARC+ARC/2);
+  const total=mid-(ang%(2*Math.PI))+extra;
+  const start=ang, dur=4400+Math.random()*1600, t0=performance.now();
+  const ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+  function frame(now){
+    const t=Math.min((now-t0)/dur,1);
+    ang=start+total*ease(t); drawWheel(ang);
+    if(t<1){ requestAnimationFrame(frame); }
+    else { spinning=false; btn.disabled=false; showPop(SEG[tSeg]); }
+  }
+  requestAnimationFrame(frame);
+}
+
+function showPop(seg){
+
+  const w=document.getElementById("popWrap");
+  const ic=document.getElementById("popIcon");
+  const ti=document.getElementById("popTitle");
+  const ms=document.getElementById("popMsg");
+
+  const spinBtn =
+    document.getElementById("spinBtn");
+
+  const backBtn =
+    document.getElementById("backBtn");
+
+  const closeBtn =
+    document.getElementById("closeBtn");
+
+  if(seg.label==="Spin Again"){
+
+    ic.textContent="🔄";
+    ti.textContent="Spin Again!";
+    ms.textContent="Lucky you — give it another whirl!";
+
+    closeBtn.style.display="inline-block";
+    closeBtn.textContent="Spin Again";
+
+    spinBtn.style.display="block";
+    backBtn.style.display="none";
+
+  }
+  else if(seg.label==="Better Luck"){
+
+    ic.textContent="🌸";
+    ti.textContent="Better Luck Next Time!";
+    ms.textContent="Try again tomorrow.";
+
+    closeBtn.style.display="none";
+
+    spinBtn.style.display="none";
+    backBtn.style.display="block";
+
+  }
+  else{
+
+    const pts =
+      seg.label.replace(
+        " pts",
+        ""
+      );
+
+    ic.textContent="🎊";
+    ti.textContent="Congratulations!";
+    ms.textContent =
+      "You won " +
+      pts +
+      " reward points!";
+
+    closeBtn.style.display="none";
+
+    spinBtn.style.display="none";
+    backBtn.style.display="block";
+
+    if(window.ReactNativeWebView){
+
+      window.ReactNativeWebView.postMessage(
+        JSON.stringify({
+          type:"reward",
+          points:parseInt(pts)
+        })
+      );
+    }
+  }
+
+  w.style.display="flex";
+
+  if(seg.label!=="Spin Again"){
+
+    setTimeout(() => {
+      closePop();
+    }, 2000);
+
+  }
+}
+
+function closePop(){ document.getElementById("popWrap").style.display="none"; }
+function goHome(){
+
+  closePop();
+
+  if(window.ReactNativeWebView){
+
+    window.ReactNativeWebView.postMessage(
+      JSON.stringify({
+        type:"goHome"
+      })
+    );
+
+  }
+
+}
+function init(){
+  sizeWheel();
+  drawWheel(ang);
+}
+
+window.addEventListener("resize", ()=>{ sizeWheel(); drawWheel(ang); });
+window.addEventListener("load", init);
+document.addEventListener("DOMContentLoaded", init);
+</script>
+</body>
+</html>

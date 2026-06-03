@@ -1,10 +1,20 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
-import { View, Text, TextInput, TouchableOpacity, Alert, ScrollView, SafeAreaView } from 'react-native';
+import {
+  Alert,
+  Keyboard,
+  SafeAreaView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native';
 
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useDispatch } from 'react-redux';
-
 import { loginUser } from '../store/authSlice';
+
 
 
 
@@ -76,121 +86,116 @@ const LoginScreen = ({ navigation }) => {
 
 
 
-  return (
+return (
+  <SafeAreaView className="flex-1 bg-indigo-50">
 
-    <SafeAreaView className="flex-1 bg-gray-50">
+    <TouchableWithoutFeedback
+      onPress={Keyboard.dismiss}
+    >
 
-      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+      <KeyboardAwareScrollView
+        className="flex-1"
+        enableOnAndroid={true}
+        enableAutomaticScroll={true}
+        extraScrollHeight={120}
+        keyboardOpeningTime={0}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          flexGrow: 1,
+          paddingBottom: 120,
+        }}
+      >
 
         {/* Header */}
+        <View className="items-center pt-16 pb-10">
 
-        <View className="bg-white px-5 pt-12 pb-8 shadow-sm">
-
-          <View className="items-center">
-
-            <View className="w-16 h-16 bg-blue-600 rounded-full items-center justify-center mb-4">
-
-              <Text className="text-white text-2xl font-bold">WR</Text>
-
-            </View>
-
-            <Text className="text-gray-900 text-2xl font-bold">Wallet Rewards</Text>
-
-            <Text className="text-gray-600 text-sm mt-1">Secure Banking Platform</Text>
-
+          <View className="w-24 h-24 bg-indigo-600 rounded-full items-center justify-center">
+            <Text className="text-white text-3xl font-bold">
+              WR
+            </Text>
           </View>
+
+          <Text className="text-3xl font-bold text-gray-900 mt-6">
+            Wallet Rewards
+          </Text>
+
+          <Text className="text-gray-500 mt-2">
+            Secure Banking Platform
+          </Text>
 
         </View>
 
+        {/* Login Card */}
+        <View className="mx-5 bg-white rounded-3xl p-6 shadow-lg mb-20">
 
-
-        {/* Login Form */}
-
-        <View className="px-5 mt-8">
-
-          <Text className="text-gray-900 text-xl font-semibold mb-6">Sign In</Text>
-
-
-
-          {/* Email Input */}
+         
 
           <View className="mb-5">
 
-            <Text className="text-gray-700 text-sm font-medium mb-2">Email</Text>
+            <Text className="text-gray-700 font-medium mb-2">
+              Email Address
+            </Text>
 
             <TextInput
-
-              className="bg-white border border-gray-300 rounded-lg px-4 py-3 text-gray-900"
-
-              placeholder="Enter your email address"
-
+              className="bg-gray-100 rounded-2xl px-4 py-4 text-gray-900"
+              placeholder="Enter your email"
               placeholderTextColor="#9CA3AF"
-
               value={email}
-
               onChangeText={setEmail}
-
               keyboardType="email-address"
-
               autoCapitalize="none"
-
+              returnKeyType="next"
             />
 
           </View>
-
-
-
-          {/* Password Input */}
 
           <View className="mb-6">
 
-            <Text className="text-gray-700 text-sm font-medium mb-2">Password</Text>
+            <Text className="text-gray-700 font-medium mb-2">
+              Password
+            </Text>
 
             <TextInput
-
-              className="bg-white border border-gray-300 rounded-lg px-4 py-3 text-gray-900"
-
+              className="bg-gray-100 rounded-2xl px-4 py-4 text-gray-900"
               placeholder="Enter your password"
-
               placeholderTextColor="#9CA3AF"
-
               value={password}
-
               onChangeText={setPassword}
-
               secureTextEntry
-
+              returnKeyType="done"
             />
 
           </View>
 
-
-
-          {/* Login Button */}
-
-          <TouchableOpacity 
-
-            className="bg-blue-600 rounded-lg py-3 items-center mb-6"
-
+          <TouchableOpacity
+            className="bg-indigo-600 rounded-2xl py-4 items-center"
             onPress={handleLogin}
-
           >
 
-            <Text className="text-white font-semibold text-base">Sign In</Text>
+            <Text className="text-white text-lg font-bold">
+              Sign In
+            </Text>
 
           </TouchableOpacity>
 
+          <View className="flex-row justify-center mt-6">
 
+            <Text className="text-gray-500">
+              Don&apos;t have an account?
+            </Text>
 
-          {/* Signup Link */}
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate(
+                  'Signup'
+                )
+              }
+            >
 
-          <View className="flex-row justify-center">
-
-            <Text className="text-gray-600 text-sm">Don't have an account? </Text>
-
-            <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
-
-              <Text className="text-blue-600 text-sm font-semibold">Sign Up</Text>
+              <Text className="text-indigo-600 font-bold ml-1">
+                Sign Up
+              </Text>
 
             </TouchableOpacity>
 
@@ -198,12 +203,12 @@ const LoginScreen = ({ navigation }) => {
 
         </View>
 
-      </ScrollView>
+      </KeyboardAwareScrollView>
 
-    </SafeAreaView>
+    </TouchableWithoutFeedback>
 
-  );
-
+  </SafeAreaView>
+);
 };
 
 

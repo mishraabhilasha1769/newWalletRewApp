@@ -127,132 +127,199 @@ export default function MobileRechargeScreen({
   };
 
   return (
-    <View className="flex-1 bg-gray-50">
-      {/* Header */}
-      <View className="bg-white px-5 pt-12 pb-6 shadow-sm">
-        <View className="flex-row items-center">
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-          >
-            <Text className="text-blue-600 text-lg mr-4">
-              ‹
-            </Text>
-          </TouchableOpacity>
+  <View className="flex-1 bg-slate-100">
 
-          <Text className="text-gray-900 text-xl font-bold">
-            Mobile Recharge
+    {/* Header */}
+    <View className="bg-blue-600 px-5 pt-14 pb-8 rounded-b-[32px]">
+
+      <View className="flex-row items-center">
+
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+        >
+          <Text className="text-white text-3xl mr-4">
+            ‹
+          </Text>
+        </TouchableOpacity>
+
+        <View>
+          <Text className="text-white text-3xl font-bold">
+            Mobile Recharge 📱
+          </Text>
+
+          <Text className="text-blue-100 mt-1">
+            Choose a plan and recharge instantly
           </Text>
         </View>
+
       </View>
 
-      <ScrollView
-        className="flex-1 px-5"
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Recharge Plans */}
-        <View className="mt-6">
-          <Text className="text-gray-900 text-lg font-semibold mb-4">
-            Select Recharge Plan
+    </View>
+
+    <ScrollView
+      className="flex-1 px-5"
+      showsVerticalScrollIndicator={false}
+    >
+
+      {/* Banner */}
+      <View className="bg-cyan-100 rounded-3xl p-5 mt-5 shadow">
+
+        <Text className="text-cyan-900 text-lg font-bold">
+          🚀 Fast Recharge
+        </Text>
+
+        <Text className="text-cyan-700 mt-2">
+          Complete your recharge in seconds and earn reward points.
+        </Text>
+
+      </View>
+
+      {/* Plans */}
+      <View className="mt-6">
+
+        <Text className="text-gray-900 text-xl font-bold mb-4">
+          Select Recharge Plan
+        </Text>
+
+        {plans.map((plan) => (
+
+          <TouchableOpacity
+            key={plan.id}
+            className={`rounded-3xl p-5 mb-4 border-2 shadow-sm ${
+              selectedPlan?.id === plan.id
+                ? 'bg-blue-50 border-blue-500'
+                : 'bg-white border-gray-100'
+            }`}
+            onPress={() =>
+              setSelectedPlan(plan)
+            }
+          >
+
+            <View className="flex-row justify-between items-center">
+
+              <View className="flex-1">
+
+                <View className="flex-row items-center">
+
+                  <Text className="text-3xl font-bold text-blue-600">
+                    ₹{plan.price}
+                  </Text>
+
+                  {plan.popular && (
+                    <View className="bg-orange-500 px-3 py-1 rounded-full ml-3">
+
+                      <Text className="text-white text-xs font-bold">
+                        🔥 Popular
+                      </Text>
+
+                    </View>
+                  )}
+
+                </View>
+
+                <Text className="text-gray-900 font-semibold text-lg mt-3">
+                  {plan.data} Data
+                </Text>
+
+                <Text className="text-gray-500 mt-1">
+                  Validity: {plan.validity}
+                </Text>
+
+              </View>
+
+              <View
+                className={`w-8 h-8 rounded-full items-center justify-center ${
+                  selectedPlan?.id === plan.id
+                    ? 'bg-blue-600'
+                    : 'border-2 border-gray-300'
+                }`}
+              >
+
+                {selectedPlan?.id === plan.id && (
+                  <Text className="text-white font-bold">
+                    ✓
+                  </Text>
+                )}
+
+              </View>
+
+            </View>
+
+          </TouchableOpacity>
+
+        ))}
+
+      </View>
+
+      {/* Selected Plan Summary */}
+      {selectedPlan && (
+
+        <View className="bg-emerald-100 rounded-3xl p-5 mt-2">
+
+          <Text className="text-emerald-900 font-bold text-lg">
+            ✅ Selected Plan
           </Text>
 
-          {plans.map((plan) => (
-            <TouchableOpacity
-              key={plan.id}
-              className={`bg-white rounded-xl p-4 shadow-sm border-2 mb-3 ${
-                selectedPlan?.id === plan.id
-                  ? 'border-blue-500 bg-blue-50'
-                  : 'border-gray-100'
-              }`}
-              onPress={() =>
-                setSelectedPlan(plan)
-              }
-            >
-              <View className="flex-row justify-between items-center">
-                <View className="flex-1">
-                  <View className="flex-row items-center mb-2">
-                    <Text className="text-gray-900 text-xl font-bold">
-                      ₹{plan.price}
-                    </Text>
+          <Text className="text-emerald-700 mt-2">
+            ₹{selectedPlan.price} • {selectedPlan.data} • {selectedPlan.validity}
+          </Text>
 
-                    {plan.popular && (
-                      <View className="bg-blue-600 px-2 py-1 rounded ml-2">
-                        <Text className="text-white text-xs font-medium">
-                          Popular
-                        </Text>
-                      </View>
-                    )}
-                  </View>
-
-                  <Text className="text-gray-700 font-medium mb-1">
-                    {plan.data} Data
-                  </Text>
-
-                  <Text className="text-gray-500 text-sm">
-                    Valid for {plan.validity}
-                  </Text>
-                </View>
-
-                <View
-                  className={`w-6 h-6 rounded-full border-2 items-center justify-center ${
-                    selectedPlan?.id ===
-                    plan.id
-                      ? 'border-blue-600 bg-blue-600'
-                      : 'border-gray-300'
-                  }`}
-                >
-                  {selectedPlan?.id ===
-                    plan.id && (
-                    <Text className="text-white text-xs">
-                      ✓
-                    </Text>
-                  )}
-                </View>
-              </View>
-            </TouchableOpacity>
-          ))}
         </View>
 
-        {/* Recharge Button */}
-        <View className="mt-6 mb-8">
-          <Pressable
-            className={`rounded-lg py-4 px-6 items-center justify-center shadow-md ${
-              selectedPlan
-                ? 'bg-blue-600'
-                : 'bg-gray-300'
-            }`}
-            onPress={() => {
-              if (!selectedPlan) {
-                return;
-              }
+      )}
 
-              setShowPaymentModal(true);
-            }}
-          >
-            <Text className="text-white font-semibold text-base">
-              Proceed to Recharge
-            </Text>
-          </Pressable>
-        </View>
+      {/* Recharge Button */}
+      <View className="mt-6 mb-10">
 
-        {/* Payment Modal */}
-        <PaymentMethodModal
-          visible={showPaymentModal}
-          onClose={() =>
-            setShowPaymentModal(false)
-          }
-          amount={
+        <Pressable
+          className={`rounded-3xl py-5 items-center shadow-lg ${
             selectedPlan
-              ? selectedPlan.price
-              : 0
-          }
-          walletBalance={
-            user?.userData?.wallet?.balance ||
-            0
-          }
-          loading={paymentLoading}
-          onContinue={handlePaymentMethod}
-        />
-      </ScrollView>
-    </View>
-  );
+              ? 'bg-blue-600'
+              : 'bg-gray-300'
+          }`}
+          onPress={() => {
+
+            if (!selectedPlan) {
+              return;
+            }
+
+            setShowPaymentModal(true);
+
+          }}
+        >
+
+          <Text className="text-white text-lg font-bold">
+
+            {selectedPlan
+              ? `Recharge ₹${selectedPlan.price}`
+              : 'Select a Plan'}
+
+          </Text>
+
+        </Pressable>
+
+      </View>
+
+      {/* Payment Modal */}
+      <PaymentMethodModal
+        visible={showPaymentModal}
+        onClose={() =>
+          setShowPaymentModal(false)
+        }
+        amount={
+          selectedPlan
+            ? selectedPlan.price
+            : 0
+        }
+        walletBalance={
+          user?.userData?.wallet?.balance || 0
+        }
+        loading={paymentLoading}
+        onContinue={handlePaymentMethod}
+      />
+
+    </ScrollView>
+
+  </View>
+);
 }

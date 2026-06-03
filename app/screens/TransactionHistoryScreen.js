@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import { useSelector } from 'react-redux';
 import { TransactionHandler } from '../business/handlers';
@@ -8,8 +8,35 @@ export default function TransactionHistoryScreen({ navigation }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const user = useSelector((state) => state.auth.user);
-  
-  const [transactionHandler, setTransactionHandler] = useState(null);
+
+  const transactionHandler = useMemo(() => {
+    return user?.uid ? new TransactionHandler(user) : null;
+  }, [user]);
+
+  const loadTransactions = useCallback(async () => {
+    if (!transactionHandler) {
+      setError('User not found');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const result = await transactionHandler.getUserTransactions();
+
+      if (result.success) {
+        setTransactionList(result.transactions);
+        setError(null);
+      } else {
+        setError(result.error);
+      }
+    } catch (err) {
+      setError('Failed to load transactions');
+      console.error('Load transactions error:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, [transactionHandler]);
 
   useEffect(() => {
     if (!user?.uid) {
@@ -18,34 +45,9 @@ export default function TransactionHistoryScreen({ navigation }) {
       return;
     }
 
-    // Initialize transaction handler
-    const handler = new TransactionHandler(user);
-    setTransactionHandler(handler);
-
-    // Load transactions from database
-    const loadTransactions = async () => {
-      try {
-        setLoading(true);
-        const result = await handler.getUserTransactions();
-        
-        if (result.success) {
-          setTransactionList(result.transactions);
-          setError(null);
-        } else {
-          setError(result.error);
-        }
-      } catch (err) {
-        setError('Failed to load transactions');
-        console.error('Load transactions error:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     loadTransactions();
 
-    // Set up real-time listener
-    const unsubscribe = handler.subscribeToTransactions((result) => {
+    const unsubscribe = transactionHandler?.subscribeToTransactions((result) => {
       if (result.success) {
         setTransactionList(result.data);
         setError(null);
@@ -58,9 +60,9 @@ export default function TransactionHistoryScreen({ navigation }) {
       if (unsubscribe) {
         unsubscribe();
       }
-      handler.unsubscribeFromTransactions();
+      transactionHandler?.unsubscribeFromTransactions();
     };
-  }, [user?.uid]);
+  }, [loadTransactions, transactionHandler, user?.uid]);
 
   
   return (

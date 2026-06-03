@@ -1,10 +1,21 @@
 import React, { useState } from 'react';
 
-import { View, Text, TextInput, TouchableOpacity, Alert, ScrollView, SafeAreaView } from 'react-native';
+import {
+  Alert,
+  Keyboard,
+  SafeAreaView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native';
 
 import { useDispatch, useSelector } from 'react-redux';
 
 import { signupUser } from '../store/authSlice';
+
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 
 
@@ -82,211 +93,179 @@ const SignupScreen = ({ navigation }) => {
 
 
 
-  return (
+ return (
+  <SafeAreaView className="flex-1 bg-indigo-50">
 
-    <SafeAreaView className="flex-1 bg-gray-50">
+    <TouchableWithoutFeedback
+      onPress={Keyboard.dismiss}
+    >
 
-      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+      <KeyboardAwareScrollView
+        className="flex-1"
+        enableOnAndroid={true}
+        enableAutomaticScroll={true}
+        extraScrollHeight={120}
+        keyboardOpeningTime={0}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          flexGrow: 1,
+          paddingBottom: 120,
+        }}
+      >
 
         {/* Header */}
+        <View className="items-center pt-16 pb-10">
 
-        <View className="bg-white px-5 pt-12 pb-8 shadow-sm">
-
-          <View className="items-center">
-
-            <View className="w-16 h-16 bg-blue-600 rounded-full items-center justify-center mb-4">
-
-              <Text className="text-white text-2xl font-bold">WR</Text>
-
-            </View>
-
-            <Text className="text-gray-900 text-2xl font-bold">Create Account</Text>
-
-            <Text className="text-gray-600 text-sm mt-1">Join Wallet Rewards today</Text>
-
+          <View className="w-24 h-24 bg-indigo-600 rounded-full items-center justify-center">
+            <Text className="text-white text-3xl font-bold">
+              WR
+            </Text>
           </View>
+
+          <Text className="text-3xl font-bold text-gray-900 mt-6">
+            Create Account
+          </Text>
+
+          <Text className="text-gray-500 mt-2">
+            Join Wallet Rewards today
+          </Text>
 
         </View>
 
+        {/* Signup Card */}
+        <View className="mx-5 bg-white rounded-3xl p-6 shadow-lg mb-20">
 
+          <Text className="text-2xl font-bold text-gray-900 mb-6">
+            Personal Information
+          </Text>
 
-        {/* Signup Form */}
-
-        <View className="px-5 mt-8">
-
-          <Text className="text-gray-900 text-xl font-semibold mb-6">Personal Information</Text>
-
-
-
-          {/* Username Input */}
-
+          {/* Username */}
           <View className="mb-4">
 
-            <Text className="text-gray-700 text-sm font-medium mb-2">Username</Text>
-
-            <TextInput
-
-              className="bg-white border border-gray-300 rounded-lg px-4 py-3 text-gray-900"
-
-              placeholder="Choose a username"
-
-              placeholderTextColor="#9CA3AF"
-
-              value={username}
-
-              onChangeText={setUsername}
-
-            />
-
-          </View>
-
-
-
-          {/* Email Input */}
-
-          <View className="mb-4">
-
-            <Text className="text-gray-700 text-sm font-medium mb-2">Email Address</Text>
-
-            <TextInput
-
-              className="bg-white border border-gray-300 rounded-lg px-4 py-3 text-gray-900"
-
-              placeholder="Enter your email address"
-
-              placeholderTextColor="#9CA3AF"
-
-              value={email}
-
-              onChangeText={setEmail}
-
-              keyboardType="email-address"
-
-              autoCapitalize="none"
-
-            />
-
-          </View>
-
-
-
-          {/* Phone Number Input */}
-
-          <View className="mb-4">
-
-            <Text className="text-gray-700 text-sm font-medium mb-2">Phone Number</Text>
-
-            <TextInput
-
-              className="bg-white border border-gray-300 rounded-lg px-4 py-3 text-gray-900"
-
-              placeholder="Enter your phone number"
-
-              placeholderTextColor="#9CA3AF"
-
-              value={phoneNumber}
-
-              onChangeText={setPhoneNumber}
-
-              keyboardType="phone-pad"
-
-            />
-
-          </View>
-
-
-
-          {/* Password Input */}
-
-          <View className="mb-6">
-
-            <Text className="text-gray-700 text-sm font-medium mb-2">Password</Text>
-
-            <TextInput
-
-              className="bg-white border border-gray-300 rounded-lg px-4 py-3 text-gray-900"
-
-              placeholder="Create a password (min 6 characters)"
-
-              placeholderTextColor="#9CA3AF"
-
-              value={password}
-
-              onChangeText={setPassword}
-
-              secureTextEntry
-
-            />
-
-          </View>
-
-
-
-          {/* Error Display */}
-
-          {error && (
-
-            <View className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
-
-              <Text className="text-red-700 text-sm">{error}</Text>
-
-            </View>
-
-          )}
-
-
-
-          {/* Terms and Conditions */}
-
-          <View className="mb-6">
-
-            <Text className="text-gray-600 text-xs text-center">
-
-              By creating an account, you agree to our{' '}
-
-              <Text className="text-blue-600 font-semibold">Terms of Service</Text>
-
-              {' '}and{' '}
-
-              <Text className="text-blue-600 font-semibold">Privacy Policy</Text>
-
+            <Text className="text-gray-700 font-medium mb-2">
+              Username
             </Text>
 
+            <TextInput
+              className="bg-gray-100 rounded-2xl px-4 py-4 text-gray-900"
+              placeholder="Choose a username"
+              placeholderTextColor="#9CA3AF"
+              value={username}
+              onChangeText={setUsername}
+            />
+
           </View>
 
+          {/* Email */}
+          <View className="mb-4">
 
+            <Text className="text-gray-700 font-medium mb-2">
+              Email Address
+            </Text>
 
-          {/* Signup Button */}
+            <TextInput
+              className="bg-gray-100 rounded-2xl px-4 py-4 text-gray-900"
+              placeholder="Enter your email"
+              placeholderTextColor="#9CA3AF"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
 
-          <TouchableOpacity 
+          </View>
 
-            className="bg-blue-600 rounded-lg py-3 items-center mb-4"
+          {/* Phone */}
+          <View className="mb-4">
 
+            <Text className="text-gray-700 font-medium mb-2">
+              Phone Number
+            </Text>
+
+            <TextInput
+              className="bg-gray-100 rounded-2xl px-4 py-4 text-gray-900"
+              placeholder="Enter phone number"
+              placeholderTextColor="#9CA3AF"
+              value={phoneNumber}
+              onChangeText={setPhoneNumber}
+              keyboardType="phone-pad"
+            />
+
+          </View>
+
+          {/* Password */}
+          <View className="mb-6">
+
+            <Text className="text-gray-700 font-medium mb-2">
+              Password
+            </Text>
+
+            <TextInput
+              className="bg-gray-100 rounded-2xl px-4 py-4 text-gray-900"
+              placeholder="Minimum 6 characters"
+              placeholderTextColor="#9CA3AF"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+            />
+
+          </View>
+
+          {/* Error */}
+          {error && (
+            <View className="bg-red-50 border border-red-200 rounded-xl p-3 mb-4">
+              <Text className="text-red-600">
+                {error}
+              </Text>
+            </View>
+          )}
+
+          {/* Terms */}
+          <Text className="text-center text-gray-500 text-xs mb-6 leading-5">
+            By creating an account, you agree to our{" "}
+            <Text className="text-indigo-600 font-bold">
+              Terms of Service
+            </Text>
+            {" "}and{" "}
+            <Text className="text-indigo-600 font-bold">
+              Privacy Policy
+            </Text>
+          </Text>
+
+          {/* Create Account */}
+          <TouchableOpacity
+            className="bg-indigo-600 rounded-2xl py-4 items-center"
             onPress={handleSignup}
-
             disabled={isLoading}
-
           >
 
-            <Text className="text-white font-semibold text-base">
-
-              {isLoading ? 'Creating Account...' : 'Create Account'}
-
+            <Text className="text-white text-lg font-bold">
+              {isLoading
+                ? 'Creating Account...'
+                : 'Create Account'}
             </Text>
 
           </TouchableOpacity>
 
+          {/* Login */}
+          <View className="flex-row justify-center mt-6">
 
+            <Text className="text-gray-500">
+              Already have an account?
+            </Text>
 
-          {/* Login Link */}
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate(
+                  'Login'
+                )
+              }
+            >
 
-          <View className="flex-row justify-center">
-
-            <Text className="text-gray-600 text-sm">Already have an account? </Text>
-
-            <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-
-              <Text className="text-blue-600 text-sm font-semibold">Sign In</Text>
+              <Text className="text-indigo-600 font-bold ml-1">
+                Sign In
+              </Text>
 
             </TouchableOpacity>
 
@@ -294,11 +273,12 @@ const SignupScreen = ({ navigation }) => {
 
         </View>
 
-      </ScrollView>
+      </KeyboardAwareScrollView>
 
-    </SafeAreaView>
+    </TouchableWithoutFeedback>
 
-  );
+  </SafeAreaView>
+);
 
 };
 

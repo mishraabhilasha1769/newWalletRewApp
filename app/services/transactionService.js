@@ -1,4 +1,4 @@
-import { collection, addDoc, query, where, orderBy, onSnapshot, getDocs } from 'firebase/firestore';
+import { collection, addDoc, query, where, onSnapshot, getDocs } from 'firebase/firestore';
 import { db } from './firebase.js';
 
 export const transactionService = {

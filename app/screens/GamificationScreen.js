@@ -1,369 +1,229 @@
-import { useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import {
-    Alert,
-    Animated,
-    Easing,
-    Text,
-    TouchableOpacity,
-    View,
+  SafeAreaView,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 
-import Svg, {
-    G,
-    Line,
-    Path,
-    Text as SvgText,
-} from 'react-native-svg';
+import { WebView } from 'react-native-webview';
+
+import { readAsStringAsync } from 'expo-file-system/legacy';
+
+import { Asset } from 'expo-asset';
 
 import { useDispatch, useSelector } from 'react-redux';
 
 import { updateUser } from '../store/authSlice';
 
-export default function GamificationScreen({
-  navigation,
-}) {
-  const dispatch = useDispatch();
+import {
+  doc,
+  updateDoc,
+} from 'firebase/firestore';
 
-  const user = useSelector(
-    (state) => state.auth.user
-  );
+import { db } from '../services/firebase';
 
-  const [winnerValue, setWinnerValue] =
+export default function GamificationScreen({navigation}) {
+
+  const [html, setHtml] =
     useState('');
 
-  const [spinning, setSpinning] =
-    useState(false);
+  const dispatch =
+    useDispatch();
 
-  const spinAnim = useRef(
-    new Animated.Value(0)
-  ).current;
-
-  const rewards = [
-    '5',
-    '20',
-    'Better Luck',
-    '10',
-    '15',
-    'Spin Again',
-    'Better Luck',
-    'Spin Again',
-  ];
-
-  const colors = [
-    '#EC4899',
-    '#3B82F6',
-    '#8B5CF6',
-    '#F97316',
-    '#10B981',
-    '#EAB308',
-    '#6366F1',
-    '#EF4444',
-  ];
-
-  const wheelSize = 320;
-
-  const radius = wheelSize / 2;
-
-  const angle = 360 / rewards.length;
-
-  const rotation = spinAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['0deg', '1440deg'],
-  });
-
-  const polarToCartesian = (
-    cx,
-    cy,
-    r,
-    angleDeg
-  ) => {
-    const angleRad =
-      ((angleDeg - 90) * Math.PI) / 180;
-
-    return {
-      x:
-        cx + r * Math.cos(angleRad),
-      y:
-        cy + r * Math.sin(angleRad),
-    };
-  };
-
-  const createSegment = (
-    startAngle,
-    endAngle,
-    color
-  ) => {
-    const start = polarToCartesian(
-      radius,
-      radius,
-      radius,
-      endAngle
+  const user =
+    useSelector(
+      (state) => state.auth.user
     );
 
-    const end = polarToCartesian(
-      radius,
-      radius,
-      radius,
-      startAngle
+  useEffect(() => {
+    loadHtml();
+  }, []);
+
+  const loadHtml = async () => {
+
+    const asset = Asset.fromModule(
+      require('../../assets/images/spin-wheel.html')
     );
 
-    const largeArcFlag =
-      endAngle - startAngle <= 180
-        ? '0'
-        : '1';
+    await asset.downloadAsync();
 
-    return `
-      M ${radius} ${radius}
-      L ${start.x} ${start.y}
-      A ${radius} ${radius} 0 ${largeArcFlag} 0 ${end.x} ${end.y}
-      Z
-    `;
+    const htmlContent =
+      await readAsStringAsync(
+        asset.localUri
+      );
+
+    setHtml(htmlContent);
   };
 
-  const handleResult = (reward) => {
-    setWinnerValue(reward);
+  const handleReward = async (points) => {
 
-    if (
-      reward.includes('5') ||
-      reward.includes('10') ||
-      reward.includes('15') ||
-      reward.includes('20')
-    ) {
-      const points =
-        parseInt(reward);
+  try {
 
-      const currentPoints =
-        user?.userData?.rewards
-          ?.points || 0;
+    console.log(
+      'Reward points received:',
+      points
+    );
 
-      const updatedUser = {
-        ...user,
+    const currentPoints =
+      user?.userData?.rewards
+        ?.points || 0;
 
-        userData: {
-          ...user.userData,
+    const updatedPoints =
+      currentPoints + points;
 
-          rewards: {
-            ...user.userData?.rewards,
+    /* COMPLETE UPDATED USER */
 
-            points:
-              currentPoints +
-              points,
-          },
+    const updatedUser = {
+      ...user,
+
+      userData: {
+        ...user.userData,
+
+        rewards: {
+          ...user.userData?.rewards,
+
+          points: updatedPoints,
         },
-      };
+      },
+    };
 
-      dispatch(
-        updateUser(updatedUser)
-      );
+    console.log(
+      'Updated user:',
+      updatedUser
+    );
 
-      Alert.alert(
-        'Congratulations 🎉',
-        `You won ${points} reward points`
-      );
-    } else if (
-      reward === 'Spin Again'
-    ) {
-      Alert.alert(
-        'Spin Again 🔄',
-        'You earned another spin'
-      );
-    } else {
-      Alert.alert(
-        'Better Luck Next Time 😔'
-      );
-    }
-  };
+    /* FIREBASE UPDATE */
 
-  const handleSpin = () => {
-    if (spinning) {
-      return;
-    }
+    await updateDoc(
+      doc(
+        db,
+        'users',
+        user.uid
+      ),
+      {
+        'userData.rewards.points':
+          updatedPoints,
+      }
+    );
 
-    setSpinning(true);
+    console.log(
+      'Firebase updated'
+    );
 
-    Animated.timing(spinAnim, {
-      toValue: 1,
-      duration: 4000,
-      easing: Easing.out(Easing.cubic),
-      useNativeDriver: true,
-    }).start(() => {
-      spinAnim.setValue(0);
+    /* REDUX UPDATE */
 
-      const randomIndex = Math.floor(
-        Math.random() * rewards.length
-      );
+    dispatch(
+      updateUser(updatedUser)
+    );
 
-      const reward =
-        rewards[randomIndex];
+    console.log(
+      'Redux updated'
+    );
 
-      handleResult(reward);
+  } catch (error) {
 
-      setSpinning(false);
-    });
-  };
+    console.log(
+      'Reward update error:',
+      error
+    );
+  }
+};
 
-  return (
-    <View className="flex-1 bg-[#0F172A]">
-      {/* Header */}
-      <View className="px-5 pt-14 pb-6">
-        <View className="flex-row items-center">
-          <TouchableOpacity
-            onPress={() =>
-              navigation.goBack()
-            }
-          >
-            <Text className="text-white text-3xl mr-4">
-              ‹
-            </Text>
-          </TouchableOpacity>
+ return (
+  <SafeAreaView className="flex-1 bg-[#FFF5FB]">
 
-          <View>
-            <Text className="text-white text-3xl font-bold">
-              Spin & Win
-            </Text>
+    {/* Header */}
+    <View className="px-5 pt-4 pb-3">
 
-            <Text className="text-gray-300 mt-1">
-              Try your luck and win rewards
-            </Text>
-          </View>
-        </View>
-      </View>
+      <View className="flex-row items-center justify-between">
 
-      {/* Main Content */}
-      <View className="flex-1 items-center justify-center">
-        {/* Pointer */}
-        <Text className="text-yellow-400 text-6xl mb-[-30px] z-50">
-          ▼
-        </Text>
+        <View>
+          <Text className="text-3xl font-bold text-pink-700">
+            Spin & Win 🎉
+          </Text>
 
-        {/* Wheel */}
-        <Animated.View
-          style={{
-            transform: [
-              { rotate: rotation },
-            ],
-          }}
-        >
-          <Svg
-            width={wheelSize}
-            height={wheelSize}
-          >
-            <G>
-              {rewards.map(
-                (reward, index) => {
-                  const startAngle =
-                    index * angle;
-
-                  const endAngle =
-                    startAngle + angle;
-
-                  const middleAngle =
-                    startAngle +
-                    angle / 2;
-
-                  const textPosition =
-                    polarToCartesian(
-                      radius,
-                      radius,
-                      radius * 0.65,
-                      middleAngle
-                    );
-
-                  return (
-                    <G key={index}>
-                      {/* Segment */}
-                      <Path
-                        d={createSegment(
-                          startAngle,
-                          endAngle,
-                          colors[index]
-                        )}
-                        fill={colors[index]}
-                        stroke="#FFFFFF"
-                        strokeWidth={4}
-                      />
-
-                      {/* Divider */}
-                      <Line
-                        x1={radius}
-                        y1={radius}
-                        x2={
-                          polarToCartesian(
-                            radius,
-                            radius,
-                            radius,
-                            startAngle
-                          ).x
-                        }
-                        y2={
-                          polarToCartesian(
-                            radius,
-                            radius,
-                            radius,
-                            startAngle
-                          ).y
-                        }
-                        stroke="#FFFFFF"
-                        strokeWidth={3}
-                      />
-
-                      {/* Reward Text */}
-                      <SvgText
-                        x={textPosition.x}
-                        y={textPosition.y}
-                        fill="#FFFFFF"
-                        fontSize="13"
-                        fontWeight="bold"
-                        textAnchor="middle"
-                      >
-                        {reward}
-                      </SvgText>
-                    </G>
-                  );
-                }
-              )}
-            </G>
-          </Svg>
-        </Animated.View>
-
-        {/* Center Circle */}
-        <View className="absolute w-20 h-20 rounded-full bg-yellow-400 items-center justify-center">
-          <Text className="text-black font-bold text-lg">
-            SPIN
+          <Text className="text-pink-500 mt-1">
+            Try your luck and earn rewards
           </Text>
         </View>
 
-        {/* Result */}
-        {winnerValue ? (
-          <View className="bg-white rounded-2xl px-8 py-4 mt-10 shadow-lg">
-            <Text className="text-gray-500 text-center">
-              Last Result
-            </Text>
-
-            <Text className="text-indigo-600 text-2xl font-bold mt-1 text-center">
-              {winnerValue}
-            </Text>
-          </View>
-        ) : null}
-
-        {/* Spin Button */}
         <TouchableOpacity
-          disabled={spinning}
-          onPress={handleSpin}
-          className={`px-16 py-5 rounded-3xl mt-10 ${
-            spinning
-              ? 'bg-gray-400'
-              : 'bg-yellow-400'
-          }`}
+          onPress={() => navigation.goBack()}
+          className="bg-white rounded-full px-4 py-2 shadow"
         >
-          <Text className="text-black text-xl font-bold">
-            {spinning
-              ? 'SPINNING...'
-              : 'SPIN'}
+          <Text className="text-pink-600 font-semibold">
+            Back
           </Text>
         </TouchableOpacity>
+
       </View>
+
+      {/* Reward Points Card */}
+      <View className="bg-white rounded-3xl p-4 mt-4 shadow">
+
+        <Text className="text-gray-500">
+          Available Reward Points
+        </Text>
+
+        <Text className="text-4xl font-bold text-violet-600 mt-2">
+          {user?.userData?.rewards?.points || 0}
+        </Text>
+
+      </View>
+
     </View>
-  );
+
+    {/* Wheel */}
+    <View className="flex-1 mx-3 mb-3 overflow-hidden rounded-3xl">
+
+      {html ? (
+        <WebView
+          originWhitelist={['*']}
+          source={{ html }}
+          javaScriptEnabled
+          domStorageEnabled
+          scrollEnabled={false}
+          style={{
+            backgroundColor: 'transparent',
+          }}
+          onMessage={async (event) => {
+
+            try {
+
+              const data = JSON.parse(
+                event.nativeEvent.data
+              );
+
+              if (data.type === 'reward') {
+
+                await handleReward(
+                  data.points
+                );
+
+              }
+
+              if (data.type === 'goHome') {
+
+                navigation.navigate(
+                  'Home'
+                );
+
+              }
+
+            } catch (error) {
+
+              console.log(error);
+
+            }
+
+          }}
+        />
+      ) : null}
+
+    </View>
+
+  </SafeAreaView>
+);
 }

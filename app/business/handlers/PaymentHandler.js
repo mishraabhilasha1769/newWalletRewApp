@@ -70,7 +70,7 @@ export class PaymentHandler {
       console.log('PaymentHandler: Processing rewards for transaction:', result.transaction.id);
       console.log('PaymentHandler: Transaction amount:', result.transaction.amount);
       
-      const rewardHandler = new RewardHandler(updatedUser, this.dispatch);
+      const rewardHandler = new RewardHandler(this.user, this.dispatch);
       const rewardResult = await rewardHandler.processTransactionReward(result.transaction);
 
       console.log('PaymentHandler: Reward result:', JSON.stringify(rewardResult, null, 2));
@@ -112,17 +112,16 @@ async processWalletPayment(plan) {
       status: 'Success',
     };
 
-    const result =
-      await transactionService.saveTransaction(
-        this.user.uid,
-        transactionData
-      );
+    await transactionService.saveTransaction(
+      this.user.uid,
+      transactionData
+    );
 
     // Update Firestore wallet balance
     await updateDoc(
       doc(db, 'users', this.user.uid),
       {
-        'wallet.balance': updatedBalance,
+        'userData.wallet.balance': updatedBalance,
       }
     );
 
